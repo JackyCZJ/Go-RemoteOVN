@@ -10,31 +10,85 @@ import (
 	"github.com/lexkong/log/lager"
 )
 
-func LsAdd(c *gin.Context) {
+//	@Summary Add new Logical switch
+//	@Description Add new Logical switch
+//	@Tags	Logical switch
+//	@Accept	string
+//	@Produce err or nil
+//	@Param	id body ovn.LsAdd true
+//	@Router /:id PUT
+func LSAdd(c *gin.Context) {
 	log.Info("Logical Switch Add", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
-	if err := c.Bind(&Lsr); err != nil {
-		handler.SendResponse(c, errno.ErrBind, nil)
-		return
-	}
+	Lsr.Ls = c.Param("id")
 	ocmd, _ := ovndbapi.LSAdd(Lsr.Ls)
 	var err error
 	err = ovndbapi.Execute(ocmd)
 	if err != nil {
 		log.Fatal("err executing command:%v", err)
 	}
+	req:=CreateResponse{
+		Name:Lsr.Ls,
+		Type:"Switch",
+		Action:"Create",
+	}
+
+	handler.SendResponse(c,nil,req)
+
 }
 
-func LsGet(c *gin.Context) {
+//	@Summary Get Logical switch
+//	@Description Add new Logical switch by Name
+//	@Tags	Logical switch
+//	@Accept	string
+//	@Produce json
+//	@Param	id body ovn.LsAdd true
+//	@Router /:id PUT
+func LSGet(c *gin.Context) {
 	log.Info("Logical Switch Get", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
-	if err := c.Bind(&Lsr); err != nil {
-		handler.SendResponse(c, errno.ErrBind, nil)
-		return
-	}
+	Lsr.Ls = c.Param("id")
 	ocmd, err := ovndbapi.LSGet(Lsr.Ls)
 	if err != nil {
-		handler.SendResponse(c,errno.ErrLsGet,nil)
+		handler.SendResponse(c, errno.ErrLsGet, nil)
+		log.Fatal("err executing command:%v", err)
+	}
+
+	LogicalSwitchList, err := json.Marshal(ocmd)
+	if err != nil {
+		log.Fatal("err executing Json:%v", err)
+	}
+	log.Info("Action Success !", lager.Data{"X-Request-Id": util.GetReqID(c)})
+	handler.SendResponse(c, nil, LogicalSwitchList)
+}
+
+func LSDel(c *gin.Context) {
+	log.Info("Logical Switch Delete", lager.Data{"X-Request-Id": util.GetReqID(c)})
+	var Lsr = LsRequest{}
+	Lsr.Ls = c.Param("id")
+	ocmd, err := ovndbapi.LSDel(Lsr.Ls)
+	if err != nil {
+		log.Fatal("err executing command:%v", err)
+	}
+	err = ovndbapi.Execute(ocmd)
+	if err != nil {
+		log.Fatal("err executing command:%v", err)
+	}
+	req:=CreateResponse{
+		Name:Lsr.Ls,
+		Type:"Switch",
+		Action:"Delete",
+	}
+
+	handler.SendResponse(c,nil,req)
+
+}
+
+func LSList(c *gin.Context) {
+	log.Info("Logical Switch Get List", lager.Data{"X-Request-Id": util.GetReqID(c)})
+	ocmd, err := ovndbapi.LSList()
+	if err != nil {
+		handler.SendResponse(c, errno.ErrLsGet, nil)
 		log.Fatal("err executing command:%v", err)
 	}
 
@@ -43,17 +97,10 @@ func LsGet(c *gin.Context) {
 		log.Fatal("err executing Json:%v", err)
 	}
 	handler.SendResponse(c, nil, LogicalSwitchList)
+	log.Info("Action Success !", lager.Data{"X-Request-Id": util.GetReqID(c)})
+
 }
 
-func LsDel(c *gin.Context){
-	log.Info("Logical Switch Get", lager.Data{"X-Request-Id": util.GetReqID(c)})
-	var Lsr = LsRequest{}
-	if err := c.Bind(&Lsr); err != nil {
-		handler.SendResponse(c, errno.ErrBind, nil)
-		return
-	}
-	ocmd, err := ovndbapi.LSDel(Lsr.Ls)
-	if err != nil {
-		log.Fatal("err executing command:%v", err)
-	}
+func LsExtIdsAdd(c *gin.Context) {
+
 }

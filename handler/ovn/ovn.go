@@ -2,7 +2,6 @@ package ovn
 
 import (
 	goovn "github.com/eBay/go-ovn"
-	"github.com/spf13/viper"
 )
 
 var ovndbapi goovn.Client
@@ -14,17 +13,17 @@ const (
 
 func init() {
 	var err error
-	var url string
-	url = viper.GetString("ovn.REMOTEURL")
-	if viper.GetString("ovn.runmode")=="local"{
-		var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
-		if ovs_rundir == "" {
-			ovs_rundir = OVS_RUNDIR
-		}
-		url = "unix:"+ovs_rundir+"/"+OVNNB_SOCKET
-	}
-
-	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: url})
+//	var url string
+	//url = viper.GetString("ovn.REMOTEURL")
+	//	//if viper.GetString("ovn.runmode")=="local"{
+	//	//	var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
+	//	//	if ovs_rundir == "" {
+	//	//		ovs_rundir = OVS_RUNDIR
+	//	//	}
+	//	//	url = "unix:"+ovs_rundir+"/"+OVNNB_SOCKET
+	//	//}
+	//	//fmt.Print(url)
+	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: "tcp://10.1.2.82:2333"})
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +103,11 @@ type LspDHCPv6 struct {
 type QoSRequest struct {
 }
 
-
+type CreateResponse struct{
+	Name string			`json:"name"`
+	Type string			`json:"type"`
+	Action string		`json:"action"`
+}
 //type LogicalSwitch struct {
 //	UUID         string
 //	Name         string
