@@ -57,12 +57,15 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		svcd.GET("/ram", sd.RAMCheck)
 	}
 
-	ovnLs := g.Group("/esix/ovn/LS")
-
-		ovnLs.PUT("/:id", ovn.LSAdd)
-		ovnLs.DELETE("/:id", ovn.LSDel)
-		ovnLs.GET("/:id", ovn.LSGet)
+	// API For OVN Logical switch
+	ovnLs := g.Group("/api/v1/esix/ovn/LS")
+	ovnLs.Use(middleware.AuthMiddleware())
+	{
+		ovnLs.PUT("/:name", ovn.LSAdd)
+		ovnLs.DELETE("/:name", ovn.LSDel)
+		ovnLs.GET("/:name", ovn.LSGet)
 		ovnLs.GET("", ovn.LSList)
+	}
 
 
 	return g

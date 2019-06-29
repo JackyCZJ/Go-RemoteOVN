@@ -6,8 +6,8 @@ import (
 	"apiserver/pkg/auth"
 	"apiserver/pkg/errno"
 	"apiserver/pkg/token"
-
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 )
 
 // @Summary Login generates the authentication token
@@ -18,6 +18,7 @@ import (
 // @Router /login [post]
 func Login(c *gin.Context) {
 	// Binding the data with the user struct.
+	log.Debug("Login")
 	var u model.UserModel
 	if err := c.Bind(&u); err != nil {
 		SendResponse(c, errno.ErrBind, nil)

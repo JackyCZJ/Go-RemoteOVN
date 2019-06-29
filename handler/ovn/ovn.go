@@ -2,6 +2,7 @@ package ovn
 
 import (
 	goovn "github.com/eBay/go-ovn"
+	"sync"
 )
 
 var ovndbapi goovn.Client
@@ -45,10 +46,12 @@ type AclRequest struct {
 //Logical switch struct
 type LsRequest struct {
 	Ls string `json:"ls"`
+	sync.Mutex
 }
 
 //Logical switch port struct
 type LspRequest struct {
+	sync.Mutex
 	Ls        string `json:"ls"`
 	Lsp       string `json:"lsp"`
 	addresses string `json:"addresses"`
@@ -57,6 +60,7 @@ type LspRequest struct {
 
 //Address Set struct
 type ASRequest struct {
+	sync.Mutex
 	Name        string            `json:"name"`
 	Addrs       string            `json:"addrs"`
 	ExternalIds map[string]string `json:"external_ids"`
@@ -64,11 +68,13 @@ type ASRequest struct {
 
 //Logical Router struct
 type LRRequest struct {
+	sync.Mutex
 	Name string `json:"name"`
 }
 
 //Logical Router Port struct
 type LRPRequest struct {
+	sync.Mutex
 	Lr          string            `json:"lr"`
 	Lrp         string            `json:"lrp"`
 	Mac         string            `json:"mac"`
@@ -79,6 +85,7 @@ type LRPRequest struct {
 
 //Logical Router And Logical Bridge	operate struct
 type LRLBRequest struct {
+	sync.Mutex
 	Lr string `json:"lr"`
 	Lb string `json:"lb"`
 }
@@ -108,14 +115,15 @@ type CreateResponse struct{
 	Type string			`json:"type"`
 	Action string		`json:"action"`
 }
-//type LogicalSwitch struct {
-//	UUID         string
-//	Name         string
-//	Ports        []string
-//	LoadBalancer []string
-//	ACLs         []string
-//	QoSRules     []string
-//	DNSRecords   []string
-//	OtherConfig  map[interface{}]interface{}
-//	ExternalID   map[interface{}]interface{}
-//}
+
+type LogicalSwitch struct {
+	UUID         string
+	Name         string
+	Ports        []string
+	LoadBalancer []string
+	ACLs         []string
+	QoSRules     []string
+	DNSRecords   []string
+	OtherConfig  map[string]interface{}
+	ExternalID   map[string]interface{}
+}

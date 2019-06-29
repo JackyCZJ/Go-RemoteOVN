@@ -5,7 +5,7 @@ import (
 	"apiserver/pkg/errno"
 	"apiserver/util"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/json"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
 	"github.com/lexkong/log/lager"
 )
@@ -13,59 +13,68 @@ import (
 //	@Summary Add new Logical switch
 //	@Description Add new Logical switch
 //	@Tags	Logical switch
-//	@Accept	string
-//	@Produce err or nil
-//	@Param	id body ovn.LsAdd true
-//	@Router /:id PUT
+//	@Produce json
+//	@Param	name path string true "Logical Switch Name"
+//	@Router /api/v1/esix/ovn/LS/{name} [PUT]
 func LSAdd(c *gin.Context) {
 	log.Info("Logical Switch Add", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
-	Lsr.Ls = c.Param("id")
+	defer Lsr.Unlock()
+	Lsr.Lock()
+	Lsr.Ls = c.Param("name")
 	ocmd, _ := ovndbapi.LSAdd(Lsr.Ls)
 	var err error
 	err = ovndbapi.Execute(ocmd)
 	if err != nil {
 		log.Fatal("err executing command:%v", err)
 	}
-	req:=CreateResponse{
-		Name:Lsr.Ls,
-		Type:"Switch",
-		Action:"Create",
+	req := CreateResponse{
+		Name:   Lsr.Ls,
+		Type:   "Switch",
+		Action: "Create",
 	}
-
-	handler.SendResponse(c,nil,req)
-
+	handler.SendResponse(c, nil, req)
 }
 
-//	@Summary Get Logical switch
-//	@Description Add new Logical switch by Name
+//	@Summary GET Logical switch By name
+//	@Description Get a Logical switch
 //	@Tags	Logical switch
-//	@Accept	string
+//	@Accept json
 //	@Produce json
-//	@Param	id body ovn.LsAdd true
-//	@Router /:id PUT
+//	@Param	name path string true "Logical Switch Name"
+//	@Router /api/v1/esix/ovn/LS/{name} [GET]
 func LSGet(c *gin.Context) {
 	log.Info("Logical Switch Get", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
-	Lsr.Ls = c.Param("id")
+	Lsr.Ls = c.Param("name")
 	ocmd, err := ovndbapi.LSGet(Lsr.Ls)
 	if err != nil {
 		handler.SendResponse(c, errno.ErrLsGet, nil)
 		log.Fatal("err executing command:%v", err)
 	}
-
-	LogicalSwitchList, err := json.Marshal(ocmd)
-	if err != nil {
-		log.Fatal("err executing Json:%v", err)
+	var l LogicalSwitch
+	for _, v := range ocmd {
+		str, _ := jsoniter.Marshal(v)
+		err := jsoniter.Unmarshal(str, &l)
+		if err != nil {
+			log.Fatal("err executing command:%v", err)
+		}
 	}
-	log.Info("Action Success !", lager.Data{"X-Request-Id": util.GetReqID(c)})
-	handler.SendResponse(c, nil, LogicalSwitchList)
+	handler.SendResponse(c, nil, l)
 }
 
+//	@Summary Delete Logical switch
+//	@Description Delete a Logical switch
+//	@Tags	Logical switch
+//	@Produce json
+//	@Param	name path string true "Logical Switch Name"
+//	@Router /api/esix/ovn/LS/{name} [DELETE]
 func LSDel(c *gin.Context) {
 	log.Info("Logical Switch Delete", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
-	Lsr.Ls = c.Param("id")
+	defer Lsr.Unlock()
+	Lsr.Lock()
+	Lsr.Ls = c.Param("name")
 	ocmd, err := ovndbapi.LSDel(Lsr.Ls)
 	if err != nil {
 		log.Fatal("err executing command:%v", err)
@@ -74,16 +83,21 @@ func LSDel(c *gin.Context) {
 	if err != nil {
 		log.Fatal("err executing command:%v", err)
 	}
-	req:=CreateResponse{
-		Name:Lsr.Ls,
-		Type:"Switch",
-		Action:"Delete",
+	req := CreateResponse{
+		Name:   Lsr.Ls,
+		Type:   "Switch",
+		Action: "Delete",
 	}
 
-	handler.SendResponse(c,nil,req)
+	handler.SendResponse(c, nil, req)
 
 }
 
+//	@Summary Get List Of Logical switch
+//	@Description  get Logical switch list
+//	@Tags	Logical switch
+//	@Produce json
+//	@Router /api/esix/ovn/LS [GET]
 func LSList(c *gin.Context) {
 	log.Info("Logical Switch Get List", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	ocmd, err := ovndbapi.LSList()
@@ -91,16 +105,15 @@ func LSList(c *gin.Context) {
 		handler.SendResponse(c, errno.ErrLsGet, nil)
 		log.Fatal("err executing command:%v", err)
 	}
-
-	LogicalSwitchList, err := json.Marshal(ocmd)
-	if err != nil {
-		log.Fatal("err executing Json:%v", err)
+	var lslist []LogicalSwitch
+	for _, v := range ocmd {
+		var l LogicalSwitch
+		str, _ := jsoniter.Marshal(v)
+		err := jsoniter.Unmarshal(str, &l)
+		if err != nil {
+			log.Fatal("err executing command:%v", err)
+		}
+		lslist = append(lslist, l)
 	}
-	handler.SendResponse(c, nil, LogicalSwitchList)
-	log.Info("Action Success !", lager.Data{"X-Request-Id": util.GetReqID(c)})
-
-}
-
-func LsExtIdsAdd(c *gin.Context) {
-
+	handler.SendResponse(c, nil, lslist)
 }
