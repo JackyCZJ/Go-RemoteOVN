@@ -2,3 +2,4 @@
 apiserver-db/
 conf/server.*
 .idea/
+log/
