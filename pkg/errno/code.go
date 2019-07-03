@@ -17,5 +17,11 @@ var (
 	ErrPasswordIncorrect = &Errno{Code: 20104, Message: "The password was incorrect."}
 
 	//ovn errors
-	ErrLsGet			= &Errno{Code: 30101,Message:"Error Logical Switch get"}
+	ErrLsGet			= &Errno{Code: 20201,Message:"Error Logical Switch Get"}
+	ErrLsAdd			= &Errno{Code: 20202,Message:"Error Logical Switch Add"}
+	ErrLsDel			= &Errno{Code: 20203,Message:"Error Logical Switch Delete"}
+	ErrLsListGet		= &Errno{Code: 20204,Message:"Error Logical Switch Get List"}
+	ErrLsExidOprate		= &Errno{Code: 20205,Message:"Error Logical Switch Ex"}
+
+	//if case ovn api error , the code will fix to 20200
 )

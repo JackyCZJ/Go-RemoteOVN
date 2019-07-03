@@ -31,5 +31,5 @@ docker_db:
 ovn:
   OVS_RUNDIR: /var/run/openvswitch
   OVNNB_SOCKET: ovnnb_db.sock
-  RUNMODE: remote
-  REMOTEURL: tcp://10.1.2.82:2333
+  runmode: remote
+  remoteurl: tcp://10.1.2.82:2333

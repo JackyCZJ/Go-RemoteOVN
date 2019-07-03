@@ -1,7 +1,13 @@
 package ovn
 
 import (
+	"apiserver/handler"
+	"apiserver/pkg/errno"
 	goovn "github.com/eBay/go-ovn"
+	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/lexkong/log"
+	"github.com/spf13/viper"
 	"sync"
 )
 
@@ -12,24 +18,26 @@ const (
 	OVNNB_SOCKET = "ovnnb_db.sock"
 )
 
+// Todo: package 的 init过早了，无法触发viper，待解决。
 func init() {
 	var err error
-//	var url string
-	//url = viper.GetString("ovn.REMOTEURL")
-	//	//if viper.GetString("ovn.runmode")=="local"{
-	//	//	var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
-	//	//	if ovs_rundir == "" {
-	//	//		ovs_rundir = OVS_RUNDIR
-	//	//	}
-	//	//	url = "unix:"+ovs_rundir+"/"+OVNNB_SOCKET
-	//	//}
-	//	//fmt.Print(url)
-	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: "tcp://10.1.2.82:2333"})
+	var url string
+	//y.SetDefault("ovn.remoteurl","tcp://10.1.2.82:2333")
+	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.82:2333")
+	url = viper.GetString("ovn.remoteurl")
+	//url = viper.GetString("ovn.remoteurl")
+	if viper.GetString("ovn.runmode") == "local" {
+		var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
+		if ovs_rundir == "" {
+			ovs_rundir = OVS_RUNDIR
+		}
+		url = "unix:" + ovs_rundir + "/" + OVNNB_SOCKET
+	}
+	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: url})
 	if err != nil {
 		panic(err)
 	}
 }
-
 
 //ACL Request struct
 type AclRequest struct {
@@ -46,13 +54,11 @@ type AclRequest struct {
 //Logical switch struct
 type LsRequest struct {
 	Ls string `json:"ls"`
-	sync.Mutex
 }
 
 //Logical switch port struct
 type LspRequest struct {
-	sync.Mutex
-	Ls        string `json:"ls"`
+	LsRequest
 	Lsp       string `json:"lsp"`
 	addresses string `json:"addresses"`
 	security  string `json:"security"`
@@ -110,10 +116,11 @@ type LspDHCPv6 struct {
 type QoSRequest struct {
 }
 
-type CreateResponse struct{
-	Name string			`json:"name"`
-	Type string			`json:"type"`
-	Action string		`json:"action"`
+type CreateResponse struct {
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Action string `json:"action"`
+	Status string `json:"status"`
 }
 
 type LogicalSwitch struct {
@@ -125,5 +132,36 @@ type LogicalSwitch struct {
 	QoSRules     []string
 	DNSRecords   []string
 	OtherConfig  map[string]interface{}
-	ExternalID   map[string]interface{}
+	ExternalID   map[string]string
+}
+
+
+//Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
+//just make it change to struct again.
+func logicalSwitchStruct(v interface{})LogicalSwitch{
+	var l LogicalSwitch
+	str, _ := jsoniter.Marshal(v)
+	err := jsoniter.Unmarshal(str, &l)
+	if err != nil {
+		log.Fatal("err executing command:%v", err)
+	}
+	return l
+}
+
+
+//Only use to handle OVN api error!
+//when in debug mode,it show more info.
+//when in release mode , it show base info.
+func handleOvnErr(c *gin.Context,err error,errn error){
+	if viper.GetString("runmode") == "debug"{
+		erro := &errno.Errno{
+			Message: err.Error(),
+			Code: 20200,
+		}
+		handler.SendResponse(c, erro, nil)
+		log.Error("err executing command:%v", err)
+		return
+	}
+	handler.SendResponse(c, errn, nil)
+	return
 }
