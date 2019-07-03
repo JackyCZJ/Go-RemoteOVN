@@ -9,7 +9,7 @@ tls:
   cert: conf/server.crt
   key: conf/server.key
 log:
-  writers: stdout
+  writers: file,stdout
   logger_level: DEBUG
   logger_file: log/apiserver.log
   log_format_text: true

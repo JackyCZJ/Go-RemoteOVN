@@ -135,10 +135,9 @@ type LogicalSwitch struct {
 	ExternalID   map[string]string
 }
 
-
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
 //just make it change to struct again.
-func logicalSwitchStruct(v interface{})LogicalSwitch{
+func logicalSwitchStruct(v interface{}) LogicalSwitch {
 	var l LogicalSwitch
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
@@ -148,20 +147,18 @@ func logicalSwitchStruct(v interface{})LogicalSwitch{
 	return l
 }
 
-
 //Only use to handle OVN api error!
-//when in debug mode,it show more info.
-//when in release mode , it show base info.
-func handleOvnErr(c *gin.Context,err error,errn error){
-	if viper.GetString("runmode") == "debug"{
-		erro := &errno.Errno{
-			Message: err.Error(),
-			Code: 20200,
-		}
+func handleOvnErr(c *gin.Context, err error, errn error) {
+	erro := &errno.Errno{
+		Message: err.Error(),
+		Code:    20200,
+	}
+	if viper.GetString("runmode") == "debug" {
 		handler.SendResponse(c, erro, nil)
-		log.Error("err executing command:%v", err)
+		log.Errorf(erro, "err executing command:")
 		return
 	}
+	log.Errorf(erro, "err executing command:")
 	handler.SendResponse(c, errn, nil)
 	return
 }

@@ -66,6 +66,12 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLs.GET("/:name", ovn.LSGet)
 		ovnLs.GET("", ovn.LSList)
 	}
+	ovnLsp := g.Group("/api/v1/esix/ovn/LSP")
+	ovnLsp.Use(middleware.AuthMiddleware())
+	{
+		ovnLsp.PUT("/:name/:port",ovn.LSPAdd)
+		ovnLsp.DELETE("/:port",ovn.LSPDel)
+	}
 
 
 	return g

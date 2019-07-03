@@ -62,7 +62,7 @@ func (c *Config) initLog() {
 		LogBackupCount: viper.GetInt("log.log_backup_count"),
 	}
 
-	log.InitWithConfig(&passLagerCfg)
+	_ = log.InitWithConfig(&passLagerCfg)
 }
 
 // 监控配置文件变化并热加载程序

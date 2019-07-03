@@ -26,16 +26,15 @@ var (
 	version = pflag.BoolP("version", "v", false, "show version info.")
 )
 
-// @title Apiserver Example API
-// @version 1.0
-// @description apiserver demo
+// @title OVN Remote API Server
+// @version 0.1
+// @description OVN Remote API Server
 
-// @contact.name lkong
-// @contact.url http://www.swagger.io/support
-// @contact.email 466701708@qq.com
+// @contact.name Jacky
+// @contact.url http://git.esix.com/jackyczj/go-restfulovn
 
 // @host localhost:8080
-// @BasePath /v1
+// @BasePath /api/v1
 func main() {
 	pflag.Parse()
 	if *version {
@@ -112,5 +111,3 @@ func pingServer() error {
 	}
 	return errors.New("Cannot connect to the router.")
 }
-
-

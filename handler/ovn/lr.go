@@ -1,18 +1,17 @@
 package ovn
 
-
-func LRGet(){
-
-}
-
-func LRAdd(){
+func LRGet() {
 
 }
 
-func LRDel(){
+func LRAdd() {
 
 }
 
-func LRlist(){
+func LRDel() {
+
+}
+
+func LRlist() {
 
 }
