@@ -72,6 +72,13 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLsp.PUT("/:name/:port",ovn.LSPAdd)
 		ovnLsp.DELETE("/:port",ovn.LSPDel)
 	}
+	ovnLsExt := g.Group("/api/v1/esix/ovn/LsExt")
+
+	ovnLsExt.Use(middleware.AuthMiddleware())
+	{
+		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
+		ovnLsExt.DELETE("/:name",ovn.LsExtIdsDel)
+	}
 
 
 	return g

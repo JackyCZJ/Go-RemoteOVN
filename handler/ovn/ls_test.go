@@ -3,189 +3,119 @@ package ovn
 import (
 	_ "apiserver/config"
 	"apiserver/handler"
-	"encoding/json"
 	"fmt"
-	"github.com/lexkong/log"
-	"github.com/spf13/viper"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
 var req handler.Response
 
-func init() {
-	passLagerCfg := log.PassLagerCfg{
-		Writers:        viper.GetString("log.writers"),
-		LoggerLevel:    viper.GetString("log.logger_level"),
-		LoggerFile:     viper.GetString("log.logger_file"),
-		LogFormatText:  viper.GetBool("log.log_format_text"),
-		RollingPolicy:  viper.GetString("log.rollingPolicy"),
-		LogRotateDate:  viper.GetInt("log.log_rotate_date"),
-		LogRotateSize:  viper.GetInt("log.log_rotate_size"),
-		LogBackupCount: viper.GetInt("log.log_backup_count"),
+func TestLS(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "test1"
+	arg := args{
+		method: "GET",
+		arg:    ar,
 	}
-	log.InitWithConfig(&passLagerCfg)
+	ginTestPathTool(LSAdd, arg, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+
+	ginTestPathTool(LSGet, arg, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+	ginTestPathTool(LSDel, arg, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+
 }
 
-func TestLSAdd(t *testing.T) {
-
-
-//	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: "tcp://10.1.2.82:2333"})
-
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.PUT("/testLSAdd/:name",LSAdd)
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("PUT", "/testLSAdd/test3", nil)
-	router.ServeHTTP(w, r)
-	resp := w.Result()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(resp.StatusCode)
-	fmt.Println(resp.Header.Get("Content-Type"))
-	//获得结果，并检查
-	_ = json.Unmarshal(body, &req)
-	if req.Code == 10001{
-		t.Log(req.Message)
-		return
+func TestLsExtIds(t *testing.T) {
+	param := make(map[string]interface{})
+	param["external_id"] = map[string]string{"a": "b"}
+	jp := jsonPackage{
+		arg: map[string]string{
+			"name":"test2",
+		},
+		method: "POST",
+		data:   param,
 	}
-	if req.Code == 0{
+	ginTestJsonTool(LsExtIdsAdd, jp, &req)
+	switch req.Code {
+	case 0:
 		t.Log(req.Message)
-		return
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
-	if req.Code == 200200{
+	ginTestJsonTool(LsExtIdsDel, jp, &req)
+	switch req.Code {
+	case 0:
 		t.Log(req.Message)
-		return
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
-	t.Fatal(req.Message,req.Code)
 }
 
-func TestLSGet(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.GET("/testLSGET/:name",LSGet)
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/testLSGET/test3", nil)
-	router.ServeHTTP(w, r)
-	resp := w.Result()
-	body, _ := ioutil.ReadAll(resp.Body)
+func TestOVN(t *testing.T) {
+	cmd,_ := ovndbapi.LSExtIdsAdd("test2", map[string]string{"a": "b"})
+	err := ovndbapi.Execute(cmd)
 
-	fmt.Println(resp.StatusCode)
-	fmt.Println(resp.Header.Get("Content-Type"))
-	//获得结果，并检查
-	_ = json.Unmarshal(body, &req)
-	if req.Code == 10001{
-		t.Log(req.Message)
-		return
+	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
+	//err := ovndbapi.Execute(cmd)
+	if err != nil {
+		t.Fatal(err)
 	}
-	if req.Code == 0{
-		t.Log(req.Message)
-		return
-	}
-	if req.Code == 200200{
-		t.Log(req.Message)
-		return
-	}
-	t.Fatal(req.Message,req.Code)
-}
-
-func TestLSDel(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.DELETE("/testLSDel/:name",LSDel)
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("DELETE", "/testLSDel/test3", nil)
-	router.ServeHTTP(w, r)
-	resp := w.Result()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(resp.StatusCode)
-	fmt.Println(resp.Header.Get("Content-Type"))
-	//获得结果，并检查
-	_ = json.Unmarshal(body, &req)
-	if req.Code == 10001{
-		t.Log(req.Message)
-		return
-	}
-	if req.Code == 0{
-		t.Log(req.Message)
-		return
-	}
-	if req.Code == 200200{
-		t.Log(req.Message)
-		return
-	}
-	t.Fatal(req.Message,req.Code)
+	t.Log("PASS")
 }
 
 func TestLSList(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	ar := make(map[string]string)
+	ar["name"] = "test2"
+	arg := args{
+		method: "GET",
+		arg:    ar,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LSList(tt.args.c)
-		})
-	}
-}
-
-func TestLsExtIdsAdd(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LsExtIdsAdd(tt.args.c)
-		})
-	}
-}
-
-func TestLSPAdd(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LSPAdd(tt.args.c)
-		})
-	}
-}
-
-func TestLSPDel(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LSPDel(tt.args.c)
-		})
+	ginTestPathTool(LSGet, arg, &req)
+	switch req.Code {
+	case 0:
+		fmt.Println(req.Data)
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
 }

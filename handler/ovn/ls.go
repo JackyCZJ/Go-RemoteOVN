@@ -16,7 +16,7 @@ import (
 //	@Param	name path string true "Logical Switch Name"
 //	@Router /api/v1/esix/ovn/LS/{name} [PUT]
 func LSAdd(c *gin.Context) {
-//	log.Info("Logical Switch Add")
+	log.Info("Logical Switch Add")
 	ls := c.Param("name")
 	var err error
 	cmd, err := ovndbapi.LSAdd(ls)
@@ -88,34 +88,30 @@ func LSDel(c *gin.Context) {
 //	@Router /api/esix/ovn/LS [GET]
 func LSList(c *gin.Context) {
 	log.Info("Logical Switch Get List", lager.Data{"X-Request-Id": util.GetReqID(c)})
-	ocmd, err := ovndbapi.LSList()
+	lss, err := ovndbapi.LSList()
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsListGet)
 		return
 	}
 	var lslist []LogicalSwitch
-	for _, v := range ocmd {
-		var l LogicalSwitch
-		l = logicalSwitchStruct(v)
+	for _, v := range lss {
+		l := logicalSwitchStruct(v)
 		lslist = append(lslist, l)
 	}
 	handler.SendResponse(c, nil, lslist)
 }
 
-//json
-//	ls logical Switch
-//	"Extid":{
-//			"key":"value"
-//			}
+//
 //
 //
 func LsExtIdsAdd(c *gin.Context) {
 	//Ext id map[string][string]
 	var r LogicalSwitch
-	if err := c.Bind(&r); err != nil {
+	if err := c.BindJSON(&r); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
+	r.Name = c.Param("name")
 	command, err := ovndbapi.LSExtIdsAdd(r.Name, r.ExternalID)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
@@ -126,13 +122,27 @@ func LsExtIdsAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
-	req := CreateResponse{
-		Name:   r.Name,
-		Type:   "External ID",
-		Action: "Add",
+	handler.SendResponse(c, nil, nil)
+}
+
+func LsExtIdsDel(c *gin.Context) {
+	var r LogicalSwitch
+	if err := c.BindJSON(&r); err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+		return
+	}
+	r.Name = c.Param("name")
+	command, err := ovndbapi.LSExtIdsDel(r.Name, r.ExternalID)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLsExidOprate)
+		return
+	}
+	err = ovndbapi.Execute(command)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLsExidOprate)
+		return
 	}
 
-	handler.SendResponse(c, nil, req)
 }
 
 func LSPAdd(c *gin.Context) {
