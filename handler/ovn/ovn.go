@@ -65,12 +65,21 @@ type AclRequest struct {
 	Direct      string            `json:"direct"`
 	Match       string            `json:"match"`
 	Action      string            `json:"action"`
-	Priority    string            `json:"priority"`
+	Priority    int            	   `json:"priority"`
 	ExternalIds map[string]string `json:"external_ids"`
 	Logflag     bool              `json:"logflag"`
 	Meter       string            `json:"meter"`
 }
 
+type ACL struct {
+	UUID       string
+	Action     string
+	Direction  string
+	Match      string
+	Priority   int
+	Log        bool
+	ExternalID map[string]string
+}
 //Logical switch struct
 type LsRequest struct {
 	Ls string `json:"ls"`
@@ -168,6 +177,23 @@ func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
 	l.ExternalID = mapString
+	if err != nil {
+		log.Fatal("struct unmarshal error :%v", err)
+	}
+	return l
+}
+
+func ACLStruct(v *goovn.ACL) ACL {
+	var l ACL
+	mapString := make(map[string]string)
+	for i,v :=range v.ExternalID{
+		strKey := fmt.Sprintf("%v", i)
+		strValue := fmt.Sprintf("%v", v)
+		mapString[strKey] = strValue
+	}
+	str, _ := jsoniter.Marshal(v)
+	err := jsoniter.Unmarshal(str, &l)
+	l.ExternalID= mapString
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}

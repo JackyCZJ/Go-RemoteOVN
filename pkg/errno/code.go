@@ -20,8 +20,11 @@ var (
 	ErrLsGet        = &Errno{Code: 20201, Message: "Error Logical Switch Get"}
 	ErrLsAdd        = &Errno{Code: 20202, Message: "Error Logical Switch Add"}
 	ErrLsDel        = &Errno{Code: 20203, Message: "Error Logical Switch Delete"}
-	ErrLsListGet    = &Errno{Code: 20204, Message: "Error Logical Switch Get List"}
-	ErrLsExidOprate = &Errno{Code: 20205, Message: "Error Logical Switch Ex"}
+	ErrLsListGet    = &Errno{Code: 20204, Message: "Fail to get list"}
+	ErrLsExidOprate = &Errno{Code: 20205, Message: "Error Logical Switch Extend id"}
 
 	//if case ovn api error , the code will fix to 20200
+	ErrACLAdd		= &Errno{Code:20206,Message: "Error ACL Add"}
+	ErrACLDel		= &Errno{Code:20207,Message: "Error ACL Del"}
+	ErrACLList		= &Errno{Code:20207,Message: "Fail to get ACL list"}
 )

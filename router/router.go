@@ -79,6 +79,12 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
 		ovnLsExt.POST("/:name",ovn.LsExtIdsDel)
 	}
+	ovnACL := g.Group("/api/v1/esix/ovn/ACL/")
+	{
+		ovnACL.POST("/:name",ovn.ACLAdd)
+		ovnACL.DELETE("/:name",ovn.ACLDel)
+		ovnACL.GET("/:name",ovn.ACLList)
+	}
 
 
 	return g
