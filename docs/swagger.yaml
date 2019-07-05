@@ -1,4 +1,4 @@
-basePath: /v1
+basePath: /api/v1
 definitions:
   api.Bar:
     properties:
@@ -221,6 +221,8 @@ definitions:
     type: object
   web.Pet:
     properties:
+      birthday:
+        type: integer
       category:
         properties:
           id:
@@ -229,14 +231,15 @@ definitions:
           name:
             example: category_name
             type: string
-          photo_urls:
+          photoUrls:
             example:
             - http://test/image/1.jpg
             - http://test/image/2.jpg
+            format: url
             items:
               type: string
             type: array
-          small_category:
+          smallCategory:
             properties:
               id:
                 example: 1
@@ -244,25 +247,52 @@ definitions:
               name:
                 example: detail_category_name
                 type: string
-              photo_urls:
+              photoUrls:
                 example:
                 - http://test/image/1.jpg
                 - http://test/image/2.jpg
                 items:
                   type: string
                 type: array
+            required:
+            - name
             type: object
         type: object
+      coeffs:
+        items:
+          type: number
+        type: array
+      customString:
+        type: string
+      customStringArr:
+        items:
+          type: string
+        type: array
+      data:
+        type: object
+      decimal:
+        type: number
       id:
         example: 1
+        format: int64
         type: integer
-      is_alive:
+      isAlive:
         example: true
         type: boolean
       name:
         example: poti
         type: string
-      photo_urls:
+      nullInt:
+        type: integer
+      pets:
+        items:
+          $ref: '#/definitions/web.Pet2'
+        type: array
+      pets2:
+        items:
+          $ref: '#/definitions/web.Pet2'
+        type: array
+      photoUrls:
         example:
         - http://test/image/1.jpg
         - http://test/image/2.jpg
@@ -278,11 +308,19 @@ definitions:
         items:
           $ref: '#/definitions/web.Tag'
         type: array
+      uuid:
+        type: string
+    required:
+    - price
     type: object
   web.Pet2:
     properties:
+      deletedAt:
+        type: string
       id:
         type: integer
+      middleName:
+        type: string
     type: object
   web.Pet5a:
     properties:
@@ -333,39 +371,48 @@ definitions:
     type: object
   web.RevValue:
     properties:
-      Data:
+      data:
         type: integer
-      Err:
+      err:
         type: integer
-      Status:
+      status:
         type: boolean
     type: object
   web.Tag:
     properties:
       id:
+        format: int64
         type: integer
       name:
         type: string
+      pets:
+        items:
+          $ref: '#/definitions/web.Pet'
+        type: array
     type: object
   web.Tags:
     items:
       properties:
         id:
+          format: int64
           type: integer
         name:
           type: string
+        pets:
+          items:
+            $ref: '#/definitions/web.Pet'
+          type: array
       type: object
     type: array
 host: localhost:8080
 info:
   contact:
-    email: 466701708@qq.com
-    name: lkong
-    url: http://www.swagger.io/support
-  description: apiserver demo
+    name: Jacky
+    url: http://git.esix.com/jackyczj/go-restfulovn
+  description: OVN Remote API Server
   license: {}
-  title: Apiserver Example API
-  version: "1.0"
+  title: OVN Remote API Server
+  version: "0.1"
 paths:
   /accounts:
     get:
@@ -646,10 +693,57 @@ paths:
       description: get Logical switch list
       produces:
       - application/json
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data":{[ "uuid": "a6b50553-9366-45d6-9e62-37335144b6c3",
+            "name": "test2", "ports": [], "load_balancer": null, "acls": [], "qos_rules":
+            null, "dns_records": null, "other_config": null, "external_id": {} }]"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
       summary: Get List Of Logical switch
       tags:
       - Logical switch
-  /api/esix/ovn/LS/{id}:
+  /api/esix/ovn/LsExt/{name}:
+    delete:
+      description: Delete extends ids form ls
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data":nil"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
+      summary: Ls Ext IDs Delete
+      tags:
+      - Logical switch
+    put:
+      description: add extends ids to ls
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data":nil"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
+      summary: Ls Ext IDs add
+      tags:
+      - Logical switch
+  /api/esix/ovn/Lsp/{name}/{port}:
+    delete:
+      description: add Port to switch
+      produces:
+      - application/json
+      summary: Add Port to a logical switch
+      tags:
+      - Logical switch Port
+  /api/esix/ovn/Lsp/{port}:
+    delete:
+      description: Delete Port from its attached switch
+      produces:
+      - application/json
+      summary: Delete Port from its attached switch
+      tags:
+      - Logical switch Port
+  /api/v1/esix/ovn/LS/{name}:
     delete:
       description: Delete a Logical switch
       parameters:
@@ -660,10 +754,15 @@ paths:
         type: string
       produces:
       - application/json
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data":nil"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
       summary: Delete Logical switch
       tags:
       - Logical switch
-  /api/v1/esix/ovn/LS/{id}:
     get:
       consumes:
       - application/json
@@ -676,10 +775,17 @@ paths:
         type: string
       produces:
       - application/json
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data": { "uuid": "a6b50553-9366-45d6-9e62-37335144b6c3",
+            "name": "test2", "ports": [], "load_balancer": null, "acls": [], "qos_rules":
+            null, "dns_records": null, "other_config": null, "external_id": {}}"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
       summary: GET Logical switch By name
       tags:
       - Logical switch
-  /api/v1/esix/ovn/LS/{name}:
     put:
       description: Add new Logical switch
       parameters:
@@ -690,6 +796,12 @@ paths:
         type: string
       produces:
       - application/json
+      responses:
+        "200":
+          description: '{"code":0,"message":"OK","data":nil"}'
+          schema:
+            $ref: '#/definitions/handler.Response'
+            type: object
       summary: Add new Logical switch
       tags:
       - Logical switch
@@ -1030,6 +1142,12 @@ paths:
           schema:
             $ref: '#/definitions/web.APIError'
             type: object
+        "401":
+          description: Unauthorized
+          schema:
+            items:
+              type: string
+            type: array
         "404":
           description: Can not find ID
           schema:

@@ -77,7 +77,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	ovnLsExt.Use(middleware.AuthMiddleware())
 	{
 		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
-		ovnLsExt.DELETE("/:name",ovn.LsExtIdsDel)
+		ovnLsExt.POST("/:name",ovn.LsExtIdsDel)
 	}
 
 

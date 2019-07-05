@@ -169,7 +169,7 @@ func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 	err := jsoniter.Unmarshal(str, &l)
 	l.ExternalID = mapString
 	if err != nil {
-		log.Fatal("err executing command:%v", err)
+		log.Fatal("struct unmarshal error :%v", err)
 	}
 	return l
 }
@@ -205,8 +205,6 @@ func ginTestPathTool(todo gin.HandlerFunc,args args,req *handler.Response){
 		url = url+"/:"+ i
 		testUrl = testUrl+"/"+arg
 	}
-	log.Info(url)
-	log.Info(testUrl)
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	router.GET(url,todo)
@@ -219,10 +217,9 @@ func ginTestPathTool(todo gin.HandlerFunc,args args,req *handler.Response){
 	fmt.Print(req.Message)
 }
 
+//method do nothing.
 type jsonPackage struct {
 	arg map[string]string
-	name string
-	value string
 	method string
 	data  map[string]interface{}
 }
@@ -245,5 +242,5 @@ func ginTestJsonTool(todo gin.HandlerFunc,param jsonPackage,req *handler.Respons
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &req)
-	fmt.Print(req.Message)
+//	fmt.Print(req.Message)
 }

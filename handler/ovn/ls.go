@@ -13,6 +13,7 @@ import (
 //	@Description Add new Logical switch
 //	@Tags	Logical switch
 //	@Produce json
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
 //	@Param	name path string true "Logical Switch Name"
 //	@Router /api/v1/esix/ovn/LS/{name} [PUT]
 func LSAdd(c *gin.Context) {
@@ -37,6 +38,7 @@ func LSAdd(c *gin.Context) {
 //	@Tags	Logical switch
 //	@Accept json
 //	@Produce json
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data": { "uuid": "a6b50553-9366-45d6-9e62-37335144b6c3", "name": "test2", "ports": [], "load_balancer": null, "acls": [], "qos_rules": null, "dns_records": null, "other_config": null, "external_id": {}}"}
 //	@Param	name path string true "Logical Switch Name"
 //	@Router /api/v1/esix/ovn/LS/{name} [GET]
 func LSGet(c *gin.Context) {
@@ -59,6 +61,7 @@ func LSGet(c *gin.Context) {
 //	@Description Delete a Logical switch
 //	@Tags	Logical switch
 //	@Produce json
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
 //	@Param	name path string true "Logical Switch Name"
 //	@Router /api/v1/esix/ovn/LS/{name} [DELETE]
 func LSDel(c *gin.Context) {
@@ -85,6 +88,7 @@ func LSDel(c *gin.Context) {
 //	@Description  get Logical switch list
 //	@Tags	Logical switch
 //	@Produce json
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":{[ "uuid": "a6b50553-9366-45d6-9e62-37335144b6c3", "name": "test2", "ports": [], "load_balancer": null, "acls": [], "qos_rules": null, "dns_records": null, "other_config": null, "external_id": {} }]"}
 //	@Router /api/esix/ovn/LS [GET]
 func LSList(c *gin.Context) {
 	log.Info("Logical Switch Get List", lager.Data{"X-Request-Id": util.GetReqID(c)})
@@ -101,9 +105,11 @@ func LSList(c *gin.Context) {
 	handler.SendResponse(c, nil, lslist)
 }
 
-//
-//
-//
+//	@Summary Ls Ext IDs add
+//  @Description add extends ids to ls
+//	@Tags Logical switch
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
+//	@Router /api/esix/ovn/LsExt/{name} [PUT]
 func LsExtIdsAdd(c *gin.Context) {
 	//Ext id map[string][string]
 	var r LogicalSwitch
@@ -125,7 +131,16 @@ func LsExtIdsAdd(c *gin.Context) {
 	handler.SendResponse(c, nil, nil)
 }
 
+//	@Summary Ls Ext IDs Delete
+//  @Description Delete extends ids form ls
+//	@Tags Logical switch
+//  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
+//	@Router /api/esix/ovn/LsExt/{name} [PUT]
 func LsExtIdsDel(c *gin.Context) {
+	// TODO:
+	//  Delete nil ext id form Logical switch.
+	// 	may add more function to delete it?
+	log.Info("ext id del")
 	var r LogicalSwitch
 	if err := c.BindJSON(&r); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
@@ -142,9 +157,14 @@ func LsExtIdsDel(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
-
+	handler.SendResponse(c, nil, nil)
 }
 
+//	@Summary Add Port to a logical switch
+//	@Description  add Port to switch
+//	@Tags	Logical switch Port
+//	@Produce json
+//	@Router /api/esix/ovn/Lsp/{name}/{port} [DELETE]
 func LSPAdd(c *gin.Context) {
 	ls := c.Param("name")
 	lp := c.Param("port")
@@ -162,7 +182,12 @@ func LSPAdd(c *gin.Context) {
 	handler.SendResponse(c, nil, nil)
 }
 
-//Delete Port from its attached switch 把网口从绑定的逻辑交换机上删除
+//	把网口从绑定的逻辑交换机上删除
+//	@Summary Delete Port from its attached switch
+//	@Description  Delete Port from its attached switch
+//	@Tags	Logical switch Port
+//	@Produce json
+//	@Router /api/esix/ovn/Lsp/{port} [DELETE]
 func LSPDel(c *gin.Context) {
 	lp := c.Param("port")
 	ocmd, err := ovndbapi.LSPDel(lp)

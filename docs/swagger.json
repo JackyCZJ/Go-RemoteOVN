@@ -1,18 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "apiserver demo",
-        "title": "Apiserver Example API",
+        "description": "OVN Remote API Server",
+        "title": "OVN Remote API Server",
         "contact": {
-            "name": "lkong",
-            "url": "http://www.swagger.io/support",
-            "email": "466701708@qq.com"
+            "name": "Jacky",
+            "url": "http://git.esix.com/jackyczj/go-restfulovn"
         },
         "license": {},
-        "version": "1.0"
+        "version": "0.1"
     },
     "host": "localhost:8080",
-    "basePath": "/v1",
+    "basePath": "/api/v1",
     "paths": {
         "/accounts": {
             "get": {
@@ -422,31 +421,77 @@
                 "tags": [
                     "Logical switch"
                 ],
-                "summary": "Get List Of Logical switch"
+                "summary": "Get List Of Logical switch",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\":{[ \"uuid\": \"a6b50553-9366-45d6-9e62-37335144b6c3\", \"name\": \"test2\", \"ports\": [], \"load_balancer\": null, \"acls\": [], \"qos_rules\": null, \"dns_records\": null, \"other_config\": null, \"external_id\": {} }]\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/esix/ovn/LS/{id}": {
+        "/api/esix/ovn/LsExt/{name}": {
+            "put": {
+                "description": "add extends ids to ls",
+                "tags": [
+                    "Logical switch"
+                ],
+                "summary": "Ls Ext IDs add",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\":nil\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
+            },
             "delete": {
-                "description": "Delete a Logical switch",
+                "description": "Delete extends ids form ls",
+                "tags": [
+                    "Logical switch"
+                ],
+                "summary": "Ls Ext IDs Delete",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\":nil\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/esix/ovn/Lsp/{name}/{port}": {
+            "delete": {
+                "description": "add Port to switch",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Logical switch"
+                    "Logical switch Port"
                 ],
-                "summary": "Delete Logical switch",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Logical Switch Name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ]
+                "summary": "Add Port to a logical switch"
             }
         },
-        "/api/v1/esix/ovn/LS/{id}": {
+        "/api/esix/ovn/Lsp/{port}": {
+            "delete": {
+                "description": "Delete Port from its attached switch",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logical switch Port"
+                ],
+                "summary": "Delete Port from its attached switch"
+            }
+        },
+        "/api/v1/esix/ovn/LS/{name}": {
             "get": {
                 "description": "Get a Logical switch",
                 "consumes": [
@@ -467,10 +512,17 @@
                         "in": "path",
                         "required": true
                     }
-                ]
-            }
-        },
-        "/api/v1/esix/ovn/LS/{name}": {
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\": { \"uuid\": \"a6b50553-9366-45d6-9e62-37335144b6c3\", \"name\": \"test2\", \"ports\": [], \"load_balancer\": null, \"acls\": [], \"qos_rules\": null, \"dns_records\": null, \"other_config\": null, \"external_id\": {}}\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Add new Logical switch",
                 "produces": [
@@ -488,7 +540,44 @@
                         "in": "path",
                         "required": true
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\":nil\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a Logical switch",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logical switch"
+                ],
+                "summary": "Delete Logical switch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Logical Switch Name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":0,\"message\":\"OK\",\"data\":nil\"}",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    }
+                }
             }
         },
         "/bottles": {
@@ -990,6 +1079,15 @@
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/web.APIError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
@@ -1990,7 +2088,13 @@
         },
         "web.Pet": {
             "type": "object",
+            "required": [
+                "price"
+            ],
             "properties": {
+                "birthday": {
+                    "type": "integer"
+                },
                 "category": {
                     "type": "object",
                     "properties": {
@@ -2002,8 +2106,9 @@
                             "type": "string",
                             "example": "category_name"
                         },
-                        "photo_urls": {
+                        "photoUrls": {
                             "type": "array",
+                            "format": "url",
                             "items": {
                                 "type": "string"
                             },
@@ -2012,8 +2117,11 @@
                                 "http://test/image/2.jpg"
                             ]
                         },
-                        "small_category": {
+                        "smallCategory": {
                             "type": "object",
+                            "required": [
+                                "name"
+                            ],
                             "properties": {
                                 "id": {
                                     "type": "integer",
@@ -2023,7 +2131,7 @@
                                     "type": "string",
                                     "example": "detail_category_name"
                                 },
-                                "photo_urls": {
+                                "photoUrls": {
                                     "type": "array",
                                     "items": {
                                         "type": "string"
@@ -2037,11 +2145,33 @@
                         }
                     }
                 },
+                "coeffs": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "customString": {
+                    "type": "string"
+                },
+                "customStringArr": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "type": "object"
+                },
+                "decimal": {
+                    "type": "number"
+                },
                 "id": {
                     "type": "integer",
+                    "format": "int64",
                     "example": 1
                 },
-                "is_alive": {
+                "isAlive": {
                     "type": "boolean",
                     "example": true
                 },
@@ -2049,7 +2179,22 @@
                     "type": "string",
                     "example": "poti"
                 },
-                "photo_urls": {
+                "nullInt": {
+                    "type": "integer"
+                },
+                "pets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.Pet2"
+                    }
+                },
+                "pets2": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.Pet2"
+                    }
+                },
+                "photoUrls": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -2071,14 +2216,23 @@
                     "items": {
                         "$ref": "#/definitions/web.Tag"
                     }
+                },
+                "uuid": {
+                    "type": "string"
                 }
             }
         },
         "web.Pet2": {
             "type": "object",
             "properties": {
+                "deletedAt": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "middleName": {
+                    "type": "string"
                 }
             }
         },
@@ -2154,13 +2308,13 @@
         "web.RevValue": {
             "type": "object",
             "properties": {
-                "Data": {
+                "data": {
                     "type": "integer"
                 },
-                "Err": {
+                "err": {
                     "type": "integer"
                 },
-                "Status": {
+                "status": {
                     "type": "boolean"
                 }
             }
@@ -2169,10 +2323,17 @@
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "name": {
                     "type": "string"
+                },
+                "pets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.Pet"
+                    }
                 }
             }
         },
@@ -2182,10 +2343,17 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "integer"
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "name": {
                         "type": "string"
+                    },
+                    "pets": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/web.Pet"
+                        }
                     }
                 }
             }
