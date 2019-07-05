@@ -17,7 +17,12 @@ import (
 	"sync"
 )
 
-var ovndbapi goovn.Client
+var ovndbapi ovndbclient
+
+type ovndbclient struct {
+	goovn.Client
+	sync.RWMutex
+}
 
 const (
 	OVS_RUNDIR   = "/var/run/openvswitch"
@@ -53,7 +58,7 @@ func init() {
 		}
 		url = "unix:" + ovs_rundir + "/" + OVNNB_SOCKET
 	}
-	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: url})
+	ovndbapi.Client, err = goovn.NewClient(&goovn.Config{Addr: url})
 	if err != nil {
 		panic(err)
 	}

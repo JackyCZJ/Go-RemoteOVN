@@ -87,7 +87,8 @@ func TestLsExtIds(t *testing.T) {
 	}
 }
 
-func TestOVN(t *testing.T) {
+//just execute command
+func TestEverything(t *testing.T) {
 	cmd,_ := ovndbapi.LSExtIdsAdd("test2", map[string]string{"a": "b"})
 	err := ovndbapi.Execute(cmd)
 

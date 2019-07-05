@@ -25,6 +25,8 @@ func LSAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsAdd)
 		return
 	}
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsAdd)
@@ -45,6 +47,8 @@ func LSGet(c *gin.Context) {
 	log.Info("Logical Switch Get")
 	var Lsr = LsRequest{}
 	Lsr.Ls = c.Param("name")
+	defer ovndbapi.RUnlock()
+	ovndbapi.RLock()
 	ocmd, err := ovndbapi.LSGet(Lsr.Ls)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsGet)
@@ -68,6 +72,8 @@ func LSDel(c *gin.Context) {
 	log.Info("Logical Switch Delete", lager.Data{"X-Request-Id": util.GetReqID(c)})
 	var Lsr = LsRequest{}
 	Lsr.Ls = c.Param("name")
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	ocmd, err := ovndbapi.LSDel(Lsr.Ls)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsDel)
@@ -92,6 +98,8 @@ func LSDel(c *gin.Context) {
 //	@Router /api/esix/ovn/LS [GET]
 func LSList(c *gin.Context) {
 	log.Info("Logical Switch Get List", lager.Data{"X-Request-Id": util.GetReqID(c)})
+	defer ovndbapi.RUnlock()
+	ovndbapi.RLock()
 	lss, err := ovndbapi.LSList()
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsListGet)
@@ -123,6 +131,8 @@ func LsExtIdsAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	err = ovndbapi.Execute(command)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
@@ -152,6 +162,8 @@ func LsExtIdsDel(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	err = ovndbapi.Execute(command)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
@@ -173,6 +185,8 @@ func LSPAdd(c *gin.Context) {
 		handleOvnErr(c, err, err)
 		return
 	}
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	err = ovndbapi.Execute(ocmd)
 	if err != nil {
 		handleOvnErr(c, err, err)
@@ -195,6 +209,8 @@ func LSPDel(c *gin.Context) {
 		handleOvnErr(c, err, err)
 		return
 	}
+	defer ovndbapi.Unlock()
+	ovndbapi.Lock()
 	err = ovndbapi.Execute(ocmd)
 	if err != nil {
 		handleOvnErr(c, err, err)

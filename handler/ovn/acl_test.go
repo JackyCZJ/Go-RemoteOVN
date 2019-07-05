@@ -1,7 +1,6 @@
 package ovn
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -77,7 +76,7 @@ func TestACLList(t *testing.T) {
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
-		fmt.Print(req.Data)
+		t.Log(req.Data)
 	case 10001:
 		t.Fatal(req.Message)
 	case 200200:
@@ -85,4 +84,10 @@ func TestACLList(t *testing.T) {
 	default:
 		t.Error(req.Message)
 	}
+}
+
+func TestACL(t *testing.T){
+	TestACLAdd(t)
+	TestACLList(t)
+	TestACLDel(t)
 }
