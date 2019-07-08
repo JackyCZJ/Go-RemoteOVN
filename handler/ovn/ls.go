@@ -145,7 +145,7 @@ func LsExtIdsAdd(c *gin.Context) {
 //  @Description Delete extends ids form ls
 //	@Tags Logical switch
 //  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
-//	@Router /api/esix/ovn/LsExt/{name} [PUT]
+//	@Router /api/esix/ovn/LsExt/{name} [Delete]
 func LsExtIdsDel(c *gin.Context) {
 	// TODO:
 	//  Delete nil ext id form Logical switch.

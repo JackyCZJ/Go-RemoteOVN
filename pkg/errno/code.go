@@ -27,4 +27,11 @@ var (
 	ErrACLAdd		= &Errno{Code:20206,Message: "Error ACL Add"}
 	ErrACLDel		= &Errno{Code:20207,Message: "Error ACL Del"}
 	ErrACLList		= &Errno{Code:20207,Message: "Fail to get ACL list"}
+
+	//Address Set Error
+	ErrASAdd		= &Errno{Code:20208,Message:"Address Set Add Fail."}
+	ErrASDel		= &Errno{Code:20209,Message:"Address Set Delete Fail."}
+	ErrASUpdate		= &Errno{Code:20210,Message:"Address Set Update Fail."}
+	ErrASList		= &Errno{Code:20211,Message:"Get List of Address set Fail"}
+	ErrASGet		= &Errno{Code:20212,Message:"Fail to get Address Set by this name"}
 )

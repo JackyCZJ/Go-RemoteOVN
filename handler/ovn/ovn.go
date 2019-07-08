@@ -100,10 +100,10 @@ type LspRequest struct {
 
 //Address Set struct
 type ASRequest struct {
-	sync.Mutex
 	Name        string            `json:"name"`
-	Addrs       string            `json:"addrs"`
-	ExternalIds map[string]string `json:"external_ids"`
+	Addresses      []string          `json:"addresses"`
+	ExternalID map[string]string `json:"external_id"`
+	UUID 		string 			  `json:"uuid"`
 }
 
 //Logical Router struct
@@ -205,6 +205,26 @@ func ACLStruct(v *goovn.ACL) ACL {
 	return l
 }
 
+
+func ASStruct(v *goovn.AddressSet) ASRequest {
+	var l ASRequest
+	mapString := make(map[string]string)
+	for i,v :=range v.ExternalID{
+		strKey := fmt.Sprintf("%v", i)
+		strValue := fmt.Sprintf("%v", v)
+		mapString[strKey] = strValue
+	}
+	str, _ := jsoniter.Marshal(v)
+	err := jsoniter.Unmarshal(str, &l)
+	l.ExternalID= mapString
+	if err != nil {
+		log.Fatal("struct unmarshal error :%v", err)
+	}
+	return l
+}
+
+
+
 //Only use to handle OVN api error!
 func handleOvnErr(c *gin.Context, err error, errn error) {
 	erro := &errno.Errno{
@@ -224,7 +244,7 @@ func handleOvnErr(c *gin.Context, err error, errn error) {
 
 //gin 测试方法，返回req
 type args struct {
-	method string
+
 	arg map[string]string
 }
 
@@ -240,7 +260,7 @@ func ginTestPathTool(todo gin.HandlerFunc,args args,req *handler.Response){
 	router := gin.New()
 	router.GET(url,todo)
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(args.method, testUrl, nil)
+	r, _ := http.NewRequest("GET", testUrl, nil)
 	router.ServeHTTP(w, r)
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)

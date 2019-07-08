@@ -23,11 +23,11 @@ ACL
 
 Address Set
 --
-- [ ] AS get
-- [ ] AS update
-- [ ] AS list
-- [ ] AS add
-- [ ] AS del
+- [x] AS get
+- [x] AS update
+- [x] AS list
+- [x] AS add
+- [x] AS del
 
 Logical Router
 --

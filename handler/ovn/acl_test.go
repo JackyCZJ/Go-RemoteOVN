@@ -67,7 +67,6 @@ func TestACLDel(t *testing.T) {
 
 func TestACLList(t *testing.T) {
 	ar := args{
-		method:"GET",
 		arg: map[string]string{
 			"name": "test2",
 		},

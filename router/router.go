@@ -79,11 +79,19 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
 		ovnLsExt.POST("/:name",ovn.LsExtIdsDel)
 	}
-	ovnACL := g.Group("/api/v1/esix/ovn/ACL/")
+	ovnACL := g.Group("/api/v1/esix/ovn/ACL")
 	{
 		ovnACL.POST("/:name",ovn.ACLAdd)
 		ovnACL.DELETE("/:name",ovn.ACLDel)
 		ovnACL.GET("/:name",ovn.ACLList)
+	}
+	ovnAS := g.Group("/api/v1/esix/ovn/AS")
+	{
+		ovnAS.PUT("/:name",ovn.ASAdd)
+		ovnAS.GET("/:name",ovn.ASGet)
+		ovnAS.POST("/:name",ovn.ASUpdate)
+		ovnAS.DELETE("/:name",ovn.ASDel)
+		ovnAS.GET("",ovn.ASList)
 	}
 
 

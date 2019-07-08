@@ -13,7 +13,6 @@ func TestLS(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test1"
 	arg := args{
-		method: "GET",
 		arg:    ar,
 	}
 	ginTestPathTool(LSAdd, arg, &req)
@@ -104,7 +103,6 @@ func TestLSList(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test2"
 	arg := args{
-		method: "GET",
 		arg:    ar,
 	}
 	ginTestPathTool(LSGet, arg, &req)
