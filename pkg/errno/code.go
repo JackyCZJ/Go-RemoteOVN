@@ -34,4 +34,10 @@ var (
 	ErrASUpdate		= &Errno{Code:20210,Message:"Address Set Update Fail."}
 	ErrASList		= &Errno{Code:20211,Message:"Get List of Address set Fail"}
 	ErrASGet		= &Errno{Code:20212,Message:"Fail to get Address Set by this name"}
+
+	ErrLRAdd		= &Errno{Code:20213,Message:"Add Logical router Fail , already exist or connect fail"}
+	ErrLRDel		= &Errno{Code:20214,Message:"Delete Logical router Fail , object not found or connect fail"}
+	ErrLRGet		= &Errno{Code:20215,Message:"Get Logical router Fail, Object not found or connect fail"}
+	ErrLRList		= &Errno{Code:20216,Message:"Fail to get router list, Object not found or connect fail"}
+
 )

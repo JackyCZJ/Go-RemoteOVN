@@ -94,6 +94,14 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnAS.GET("",ovn.ASList)
 	}
 
+	ovnLR := g.Group("/api/v1/esix/ovn/LR")
+	{
+		ovnLR.PUT("/:name",ovn.LRAdd)
+		ovnLR.DELETE("/:name",ovn.LRDel)
+		ovnLR.GET("/:name",ovn.LRGet)
+		ovnLR.GET("",ovn.LRList)
+	}
+
 
 	return g
 }

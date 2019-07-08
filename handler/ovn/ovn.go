@@ -43,7 +43,7 @@ func init() {
 		LogBackupCount: viper.GetInt("log.log_backup_count"),
 	}
 	err = log.InitWithConfig(&passLagerCfg)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	var url string
@@ -70,7 +70,7 @@ type AclRequest struct {
 	Direct      string            `json:"direct"`
 	Match       string            `json:"match"`
 	Action      string            `json:"action"`
-	Priority    int            	   `json:"priority"`
+	Priority    int               `json:"priority"`
 	ExternalIds map[string]string `json:"external_ids"`
 	Logflag     bool              `json:"logflag"`
 	Meter       string            `json:"meter"`
@@ -85,6 +85,7 @@ type ACL struct {
 	Log        bool
 	ExternalID map[string]string
 }
+
 //Logical switch struct
 type LsRequest struct {
 	Ls string `json:"ls"`
@@ -100,16 +101,17 @@ type LspRequest struct {
 
 //Address Set struct
 type ASRequest struct {
-	Name        string            `json:"name"`
-	Addresses      []string          `json:"addresses"`
+	Name       string            `json:"name"`
+	Addresses  []string          `json:"addresses"`
 	ExternalID map[string]string `json:"external_id"`
-	UUID 		string 			  `json:"uuid"`
+	UUID       string            `json:"uuid"`
 }
 
 //Logical Router struct
 type LRRequest struct {
 	sync.Mutex
 	Name string `json:"name"`
+	ExternalID map[string]string `json:"external_id"`
 }
 
 //Logical Router Port struct
@@ -158,15 +160,29 @@ type CreateResponse struct {
 }
 
 type LogicalSwitch struct {
-	UUID         string `json:"uuid"`
-	Name         string		`json:"name"`
-	Ports        []string `json:"ports"`
-	LoadBalancer []string `json:"load_balancer"`
-	ACLs         []string `json:"acls"`
-	QoSRules     []string `json:"qos_rules"`
-	DNSRecords   []string `json:"dns_records"`
-	OtherConfig  map[string]interface{} `json:"other_config"`
-	ExternalID   map[string]string	`json:"external_id"`
+	UUID         string                 `json:"uuid"`
+	Name         string                 `json:"name"`
+	Ports        []string               `json:"ports"`
+	LoadBalancer []string               `json:"load_balancer"`
+	ACLs         []string               `json:"acls"`
+	QoSRules     []string               `json:"qos_rules"`
+	DNSRecords   []string               `json:"dns_records"`
+	OtherConfig  map[string]string 		`json:"other_config"`
+	ExternalID   map[string]string      `json:"external_id"`
+}
+
+type LogicalRouter struct {
+	UUID    string
+	Name    string
+	Enabled bool
+
+	Ports        []string
+	StaticRoutes []string
+	NAT          []string
+	LoadBalancer []string
+
+	Options    map[string]string
+	ExternalID map[string]string
 }
 
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
@@ -174,7 +190,7 @@ type LogicalSwitch struct {
 func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 	var l LogicalSwitch
 	mapString := make(map[string]string)
-	for i,v :=range v.ExternalID{
+	for i, v := range v.ExternalID {
 		strKey := fmt.Sprintf("%v", i)
 		strValue := fmt.Sprintf("%v", v)
 		mapString[strKey] = strValue
@@ -191,39 +207,60 @@ func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 func ACLStruct(v *goovn.ACL) ACL {
 	var l ACL
 	mapString := make(map[string]string)
-	for i,v :=range v.ExternalID{
+	for i, v := range v.ExternalID {
 		strKey := fmt.Sprintf("%v", i)
 		strValue := fmt.Sprintf("%v", v)
 		mapString[strKey] = strValue
 	}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID= mapString
+	l.ExternalID = mapString
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
 	return l
 }
-
 
 func ASStruct(v *goovn.AddressSet) ASRequest {
 	var l ASRequest
 	mapString := make(map[string]string)
-	for i,v :=range v.ExternalID{
+	for i, v := range v.ExternalID {
 		strKey := fmt.Sprintf("%v", i)
 		strValue := fmt.Sprintf("%v", v)
 		mapString[strKey] = strValue
 	}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID= mapString
+	l.ExternalID = mapString
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
 	return l
 }
 
-
+func LRStruct(v *goovn.LogicalRouter) LogicalRouter {
+	var l LogicalRouter
+	mapString := make(map[string]string)
+	optString := make(map[string]string)
+	for i, v := range v.ExternalID {
+		strKey := fmt.Sprintf("%v", i)
+		strValue := fmt.Sprintf("%v", v)
+		mapString[strKey] = strValue
+	}
+	for i,v := range v.Options{
+		optionKey := fmt.Sprintf("%v", i)
+		optValue := fmt.Sprintf("%v", v)
+		optString[optionKey ] = optValue
+		}
+	str, _ := jsoniter.Marshal(v)
+	err := jsoniter.Unmarshal(str, &l)
+	l.ExternalID = mapString
+	l.Options = optString
+	if err != nil {
+		log.Fatal("struct unmarshal error :%v", err)
+	}
+	return l
+}
 
 //Only use to handle OVN api error!
 func handleOvnErr(c *gin.Context, err error, errn error) {
@@ -241,24 +278,22 @@ func handleOvnErr(c *gin.Context, err error, errn error) {
 	return
 }
 
-
 //gin 测试方法，返回req
 type args struct {
-
 	arg map[string]string
 }
 
 //use to test path param func
-func ginTestPathTool(todo gin.HandlerFunc,args args,req *handler.Response){
+func ginTestPathTool(todo gin.HandlerFunc, args args, req *handler.Response) {
 	url := ""
-	testUrl:= ""
-	for i,arg :=range args.arg{
-		url = url+"/:"+ i
-		testUrl = testUrl+"/"+arg
+	testUrl := ""
+	for i, arg := range args.arg {
+		url = url + "/:" + i
+		testUrl = testUrl + "/" + arg
 	}
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	router.GET(url,todo)
+	router.GET(url, todo)
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", testUrl, nil)
 	router.ServeHTTP(w, r)
@@ -270,28 +305,29 @@ func ginTestPathTool(todo gin.HandlerFunc,args args,req *handler.Response){
 
 //method do nothing.
 type jsonPackage struct {
-	arg map[string]string
+	arg    map[string]string
 	method string
-	data  map[string]interface{}
+	data   map[string]interface{}
 }
+
 //use to test json param func
-func ginTestJsonTool(todo gin.HandlerFunc,param jsonPackage,req *handler.Response){
+func ginTestJsonTool(todo gin.HandlerFunc, param jsonPackage, req *handler.Response) {
 	gin.SetMode(gin.TestMode)
 	url := ""
-	testUrl:= ""
-	for i,arg :=range param.arg{
-		url = url+"/:"+ i
-		testUrl = testUrl+"/"+arg
+	testUrl := ""
+	for i, arg := range param.arg {
+		url = url + "/:" + i
+		testUrl = testUrl + "/" + arg
 	}
 	router := gin.New()
-	jsonByte,_ := jsoniter.Marshal(param.data)
+	jsonByte, _ := jsoniter.Marshal(param.data)
 	w := httptest.NewRecorder()
 	c := bytes.NewReader(jsonByte)
-	router.PUT(url,todo)
+	router.PUT(url, todo)
 	r := httptest.NewRequest("PUT", testUrl, c)
 	router.ServeHTTP(w, r)
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &req)
-//	fmt.Print(req.Message)
+	//	fmt.Print(req.Message)
 }

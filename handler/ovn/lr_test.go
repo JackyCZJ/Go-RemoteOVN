@@ -1,55 +1,87 @@
 package ovn
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLRGet(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
+	ar := make(map[string]string)
+	ar["name"] = "LrTest1"
+	arg := args{
+		arg:    ar,
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRGet()
-		})
+	ginTestPathTool(LRGet,arg,&req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+		t.Log(req.Data)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
 }
 
 func TestLRAdd(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
+	param := make(map[string]interface{})
+	param["external_id"] = map[string]string{"a": "b"}
+	jp := jsonPackage{
+		arg: map[string]string{
+			"name":"LrTest1",
+		},
+		method: "POST",
+		data:   param,
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRAdd()
-		})
+	ginTestJsonTool(LRAdd,jp,&req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
 }
 
 func TestLRDel(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
+	ar := make(map[string]string)
+	ar["name"] = "LrTest1"
+	arg := args{
+		arg:    ar,
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRDel()
-		})
+	ginTestPathTool(LRDel,arg,&req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
 }
 
-func TestLRlist(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
+func TestLRList(t *testing.T) {
+	ar := args{
+		arg: map[string]string{
+
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRlist()
-		})
+	ginTestPathTool(ACLList,ar,&req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+		t.Log(req.Data)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
 	}
 }
