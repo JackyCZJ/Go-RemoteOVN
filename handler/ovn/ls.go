@@ -147,17 +147,17 @@ func LsExtIdsAdd(c *gin.Context) {
 //  @Success 200 {object} handler.Response "{"code":0,"message":"OK","data":nil"}
 //	@Router /api/esix/ovn/LsExt/{name} [Delete]
 func LsExtIdsDel(c *gin.Context) {
-	// TODO:
-	//  Delete nil ext id form Logical switch.
-	// 	may add more function to delete it?
-	log.Info("ext id del")
+	log.Info("Logical Switch Extend id del")
 	var r LogicalSwitch
 	if err := c.BindJSON(&r); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
 	r.Name = c.Param("name")
-	command, err := ovndbapi.LSExtIdsDel(r.Name, r.ExternalID)
+	command, err := ovndbapi.LSExtIdsDel(r.Name, nil)
+	if len(r.ExternalID) != 0{
+		command, err = ovndbapi.LSExtIdsDel(r.Name, r.ExternalID)
+	}
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
