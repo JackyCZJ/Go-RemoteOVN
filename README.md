@@ -31,10 +31,10 @@ Address Set
 
 Logical Router
 --
-- [ ] lr add
-- [ ] lr get
-- [ ] lr del
-- [ ] lr list
+- [x] lr add
+- [x] lr get
+- [x] lr del
+- [x] lr list
 - [ ] lrp list 
 - [ ] lrp add
 - [ ] lrp del
