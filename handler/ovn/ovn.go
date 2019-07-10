@@ -14,15 +14,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"sync"
 )
 
-var ovndbapi ovndbclient
+var ovndbapi goovn.Client
 
-type ovndbclient struct {
-	goovn.Client
-	sync.RWMutex
-}
+
 
 const (
 	OVS_RUNDIR   = "/var/run/openvswitch"
@@ -58,7 +54,7 @@ func init() {
 		}
 		url = "unix:" + ovs_rundir + "/" + OVNNB_SOCKET
 	}
-	ovndbapi.Client, err = goovn.NewClient(&goovn.Config{Addr: url})
+	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: url})
 	if err != nil {
 		panic(err)
 	}
@@ -109,15 +105,12 @@ type ASRequest struct {
 
 //Logical Router struct
 type LRRequest struct {
-	sync.Mutex
 	Name string `json:"name"`
 	ExternalID map[string]string `json:"external_id"`
 }
 
 //Logical Router Port struct
 type LRPRequest struct {
-	sync.Mutex
-	Lr          string            `json:"lr"`
 	Lrp         string            `json:"lrp"`
 	Mac         string            `json:"mac"`
 	Network     []string          `json:"network"`
@@ -125,9 +118,20 @@ type LRPRequest struct {
 	ExternalIds map[string]string `json:"external_ids"`
 }
 
+type LogicalRouterPort struct {
+	UUID           string
+	Name           string
+	GatewayChassis []string
+	Networks       []string
+	MAC            string
+	Enabled        bool
+	IPv6RAConfigs  map[string]string
+	Options        map[string]string
+	Peer           string
+	ExternalID     map[string]string
+}
 //Logical Router And Logical Bridge	operate struct
 type LRLBRequest struct {
-	sync.Mutex
 	Lr string `json:"lr"`
 	Lb string `json:"lb"`
 }
@@ -250,15 +254,15 @@ func LRStruct(v *goovn.LogicalRouter) LogicalRouter {
 	for i,v := range v.Options{
 		optionKey := fmt.Sprintf("%v", i)
 		optValue := fmt.Sprintf("%v", v)
-		optString[optionKey ] = optValue
+		optString[optionKey] = optValue
 		}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID = mapString
-	l.Options = optString
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
+	l.ExternalID = mapString
+	l.Options = optString
 	return l
 }
 
@@ -278,7 +282,7 @@ func handleOvnErr(c *gin.Context, err error, errn error) {
 	return
 }
 
-//gin 测试方法，返回req
+
 type args struct {
 	arg map[string]string
 }
@@ -306,7 +310,6 @@ func ginTestPathTool(todo gin.HandlerFunc, args args, req *handler.Response) {
 //method do nothing.
 type jsonPackage struct {
 	arg    map[string]string
-	method string
 	data   map[string]interface{}
 }
 

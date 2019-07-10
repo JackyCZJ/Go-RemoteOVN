@@ -23,8 +23,6 @@ func ACLAdd(c *gin.Context) {
 		handleOvnErr(c,err,errno.ErrACLAdd)
 		return
 	}
-	defer ovndbapi.Unlock()
-	ovndbapi.Lock()
 	err = ovndbapi.Execute(cmd)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrACLAdd)
@@ -49,8 +47,6 @@ func ACLDel(c *gin.Context) {
 		handleOvnErr(c,err,errno.ErrACLDel)
 		return
 	}
-	defer ovndbapi.Unlock()
-	ovndbapi.Lock()
 	err = ovndbapi.Execute(cmd)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrACLDel)
@@ -61,8 +57,6 @@ func ACLDel(c *gin.Context) {
 
 func ACLList(c *gin.Context) {
 	ls := c.Param("name")
-	defer ovndbapi.RUnlock()
-	ovndbapi.RLock()
 	acls, err := ovndbapi.ACLList(ls)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrACLList)

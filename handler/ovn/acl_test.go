@@ -10,7 +10,6 @@ func TestACLAdd(t *testing.T) {
 		arg: map[string]string{
 			"name":"test2",
 		},
-		method:"GET",
 		data: map[string]interface{}{
 			"ls": "test2",
 			"direct":"to-lport",
@@ -40,7 +39,6 @@ func TestACLDel(t *testing.T) {
 		arg: map[string]string{
 			"name":"test2",
 		},
-		method:"GET",
 		data: map[string]interface{}{
 			"ls": "test2",
 			"direct":"to-lport",

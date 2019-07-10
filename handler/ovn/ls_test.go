@@ -59,7 +59,6 @@ func TestLsExtIds(t *testing.T) {
 		arg: map[string]string{
 			"name":"test2",
 		},
-		method: "POST",
 		data:   param,
 	}
 	ginTestJsonTool(LsExtIdsAdd, jp, &req)

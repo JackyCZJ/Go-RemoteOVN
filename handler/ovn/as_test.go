@@ -9,7 +9,6 @@ func TestASAdd(t *testing.T) {
 		arg: map[string]string{
 			"name": "asTest",
 		},
-		method: "GET",
 		data: map[string]interface{}{
 			"name": "asTest",
 			"Addresses": []string{
@@ -92,7 +91,6 @@ func TestASUpdate(t *testing.T) {
 		arg: map[string]string{
 			"name": "asTest",
 		},
-		method: "GET",
 		data: map[string]interface{}{
 			"name": "asTest",
 			"Addresses": []string{

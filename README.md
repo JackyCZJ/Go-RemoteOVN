@@ -35,9 +35,9 @@ Logical Router
 - [x] lr get
 - [x] lr del
 - [x] lr list
-- [ ] lrp list 
-- [ ] lrp add
-- [ ] lrp del
+- [x] lrp list 
+- [x] lrp add
+- [x] lrp del
 
 Load Balancer
 --

@@ -77,7 +77,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	ovnLsExt.Use(middleware.AuthMiddleware())
 	{
 		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
-		ovnLsExt.POST("/:name",ovn.LsExtIdsDel)
+		ovnLsExt.DELETE("/:name",ovn.LsExtIdsDel)
 	}
 	ovnACL := g.Group("/api/v1/esix/ovn/ACL")
 	{
@@ -102,6 +102,12 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLR.GET("",ovn.LRList)
 	}
 
+	ovnLRP := g.Group("/api/v1/esix/ovn/LRP")
+	{
+		ovnLRP.PUT("/:name/:port",ovn.LRPAdd)
+		ovnLRP.DELETE("/:name/:port",ovn.LRPDel)
+		ovnLRP.GET("/:name",ovn.LRPList)
+	}
 
 	return g
 }

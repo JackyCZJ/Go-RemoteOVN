@@ -4,6 +4,7 @@ import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 )
 
 
@@ -18,8 +19,6 @@ func ASAdd(c *gin.Context){
 	if len(as.ExternalID) == 0{
 		as.ExternalID = nil
 	}
-	defer  ovndbapi.Unlock()
-	ovndbapi.Lock()
 	cmd, err := ovndbapi.ASAdd(as.Name,as.Addresses,as.ExternalID)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrASAdd)
@@ -30,13 +29,12 @@ func ASAdd(c *gin.Context){
 		handleOvnErr(c,err,errno.ErrASAdd)
 		return
 	}
+	log.Infof("Address set %s Add",as.Name)
 	handler.SendResponse(c,nil,nil)
 }
 
 func ASDel(c *gin.Context){
 	as := c.Param("name")
-	defer  ovndbapi.Unlock()
-	ovndbapi.Lock()
 	cmd, err := ovndbapi.ASDel(as)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrASDel)
@@ -47,6 +45,7 @@ func ASDel(c *gin.Context){
 		handleOvnErr(c,err,errno.ErrASDel)
 		return
 	}
+	log.Infof("Address Set %s Delete",as)
 	handler.SendResponse(c,nil,nil)
 }
 
@@ -59,8 +58,6 @@ func ASUpdate(c *gin.Context){
 	if len(as.ExternalID) == 0{
 		as.ExternalID = nil
 	}
-	defer  ovndbapi.Unlock()
-	ovndbapi.Lock()
 	cmd, err := ovndbapi.ASUpdate(as.Name,as.Addresses,as.ExternalID)
 	if err != nil{
 		handleOvnErr(c,err,errno.ErrASUpdate)
@@ -71,13 +68,12 @@ func ASUpdate(c *gin.Context){
 		handleOvnErr(c,err,errno.ErrASUpdate)
 		return
 	}
+	log.Infof("Address Set %s Update",as.Name)
 	handler.SendResponse(c,nil,nil)
 }
 
 func ASGet(c *gin.Context){
 	as := c.Param("name")
-	defer ovndbapi.RUnlock()
-	ovndbapi.RLock()
 	cmd, err := ovndbapi.ASGet(as)
 	if err != nil {
 		handleOvnErr(c,err,errno.ErrASGet)
@@ -88,8 +84,6 @@ func ASGet(c *gin.Context){
 }
 
 func ASList(c *gin.Context){
-	defer ovndbapi.RUnlock()
-	ovndbapi.RLock()
 	cmd, err := ovndbapi.ASList()
 	if err != nil {
 		handleOvnErr(c,err,errno.ErrASList)
