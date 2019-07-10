@@ -30,24 +30,6 @@ func TestASAdd(t *testing.T) {
 	}
 }
 
-func TestASDel(t *testing.T) {
-	ar := make(map[string]string)
-	ar["name"] = "asTest"
-	arg := args{
-		arg: ar,
-	}
-	ginTestPathTool(ASDel, arg, &req)
-	switch req.Code {
-	case 0:
-		t.Log(req.Message)
-	case 10001:
-		t.Fatal(req.Message)
-	case 200200:
-		t.Fatal(req.Message)
-	default:
-		t.Error(req.Message)
-	}
-}
 
 func TestASGet(t *testing.T) {
 	ar := make(map[string]string)
@@ -101,6 +83,25 @@ func TestASUpdate(t *testing.T) {
 		},
 	}
 	ginTestJsonTool(ASUpdate, js, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+}
+
+func TestASDel(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "asTest"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(ASDel, arg, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)

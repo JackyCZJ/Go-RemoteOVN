@@ -34,6 +34,26 @@ func TestACLAdd(t *testing.T) {
 	}
 }
 
+func TestACLList(t *testing.T) {
+	ar := args{
+		arg: map[string]string{
+			"name": "test2",
+		},
+	}
+	ginTestPathTool(ACLList,ar,&req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+		t.Log(req.Data)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+}
+
 func TestACLDel(t *testing.T) {
 	js := jsonPackage{
 		arg: map[string]string{
@@ -63,28 +83,9 @@ func TestACLDel(t *testing.T) {
 	}
 }
 
-func TestACLList(t *testing.T) {
-	ar := args{
-		arg: map[string]string{
-			"name": "test2",
-		},
-	}
-	ginTestPathTool(ACLList,ar,&req)
-	switch req.Code {
-	case 0:
-		t.Log(req.Message)
-		t.Log(req.Data)
-	case 10001:
-		t.Fatal(req.Message)
-	case 200200:
-		t.Fatal(req.Message)
-	default:
-		t.Error(req.Message)
-	}
-}
 
-func TestACL(t *testing.T){
-	TestACLAdd(t)
-	TestACLList(t)
-	TestACLDel(t)
-}
+//func TestACL(t *testing.T){
+//	TestACLAdd(t)
+//	TestACLList(t)
+//	TestACLDel(t)
+//}

@@ -9,7 +9,7 @@ import (
 
 var req handler.Response
 
-func TestLS(t *testing.T) {
+func TestLSAdd(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test1"
 	arg := args{
@@ -27,6 +27,17 @@ func TestLS(t *testing.T) {
 		t.Error(req.Message)
 	}
 
+
+
+
+}
+
+func TestLSGet(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "test1"
+	arg := args{
+		arg:    ar,
+	}
 	ginTestPathTool(LSGet, arg, &req)
 	switch req.Code {
 	case 0:
@@ -37,6 +48,14 @@ func TestLS(t *testing.T) {
 		t.Fatal(req.Message)
 	default:
 		t.Error(req.Message)
+	}
+}
+
+func TestLSDel(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "test1"
+	arg := args{
+		arg:    ar,
 	}
 	ginTestPathTool(LSDel, arg, &req)
 	switch req.Code {
@@ -49,7 +68,6 @@ func TestLS(t *testing.T) {
 	default:
 		t.Error(req.Message)
 	}
-
 }
 
 func TestLsExtIds(t *testing.T) {
@@ -86,17 +104,17 @@ func TestLsExtIds(t *testing.T) {
 }
 
 //just execute command
-func TestEverything(t *testing.T) {
-	cmd,_ := ovndbapi.LSExtIdsAdd("test2", map[string]string{"a": "b"})
-	err := ovndbapi.Execute(cmd)
-
-	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
-	//err := ovndbapi.Execute(cmd)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log("PASS")
-}
+//func TestEverything(t *testing.T) {
+//	cmd,_ := ovndbapi.LSExtIdsAdd("test2", map[string]string{"a": "b"})
+//	err := ovndbapi.Execute(cmd)
+//
+//	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
+//	//err := ovndbapi.Execute(cmd)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	t.Log("PASS")
+//}
 
 func TestLSList(t *testing.T) {
 	ar := make(map[string]string)

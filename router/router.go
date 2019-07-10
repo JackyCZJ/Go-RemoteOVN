@@ -66,26 +66,31 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLs.GET("/:name", ovn.LSGet)
 		ovnLs.GET("", ovn.LSList)
 	}
+
 	ovnLsp := g.Group("/api/v1/esix/ovn/LSP")
 	ovnLsp.Use(middleware.AuthMiddleware())
 	{
 		ovnLsp.PUT("/:name/:port",ovn.LSPAdd)
 		ovnLsp.DELETE("/:port",ovn.LSPDel)
 	}
-	ovnLsExt := g.Group("/api/v1/esix/ovn/LsExt")
 
+	ovnLsExt := g.Group("/api/v1/esix/ovn/LsExt")
 	ovnLsExt.Use(middleware.AuthMiddleware())
 	{
 		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
 		ovnLsExt.DELETE("/:name",ovn.LsExtIdsDel)
 	}
+
 	ovnACL := g.Group("/api/v1/esix/ovn/ACL")
+	ovnACL.Use(middleware.AuthMiddleware())
 	{
 		ovnACL.POST("/:name",ovn.ACLAdd)
 		ovnACL.DELETE("/:name",ovn.ACLDel)
 		ovnACL.GET("/:name",ovn.ACLList)
 	}
+
 	ovnAS := g.Group("/api/v1/esix/ovn/AS")
+	ovnAS.Use(middleware.AuthMiddleware())
 	{
 		ovnAS.PUT("/:name",ovn.ASAdd)
 		ovnAS.GET("/:name",ovn.ASGet)
@@ -95,6 +100,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	}
 
 	ovnLR := g.Group("/api/v1/esix/ovn/LR")
+	ovnLR.Use(middleware.AuthMiddleware())
 	{
 		ovnLR.PUT("/:name",ovn.LRAdd)
 		ovnLR.DELETE("/:name",ovn.LRDel)
@@ -103,6 +109,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	}
 
 	ovnLRP := g.Group("/api/v1/esix/ovn/LRP")
+	ovnLRP.Use(middleware.AuthMiddleware())
 	{
 		ovnLRP.PUT("/:name/:port",ovn.LRPAdd)
 		ovnLRP.DELETE("/:name/:port",ovn.LRPDel)

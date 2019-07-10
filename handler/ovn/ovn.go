@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 )
 
 var ovndbapi goovn.Client
@@ -246,18 +247,27 @@ func LRStruct(v *goovn.LogicalRouter) LogicalRouter {
 	var l LogicalRouter
 	mapString := make(map[string]string)
 	optString := make(map[string]string)
-	for i, v := range v.ExternalID {
-		strKey := fmt.Sprintf("%v", i)
-		strValue := fmt.Sprintf("%v", v)
-		mapString[strKey] = strValue
-	}
-	for i,v := range v.Options{
-		optionKey := fmt.Sprintf("%v", i)
-		optValue := fmt.Sprintf("%v", v)
-		optString[optionKey] = optValue
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for i, v := range v.ExternalID {
+			strKey := fmt.Sprintf("%v", i)
+			strValue := fmt.Sprintf("%v", v)
+			mapString[strKey] = strValue
 		}
+	}()
+	go func() {
+		defer wg.Done()
+		for i,v := range v.Options{
+			optionKey := fmt.Sprintf("%v", i)
+			optValue := fmt.Sprintf("%v", v)
+			optString[optionKey] = optValue
+		}
+	}()
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
+	wg.Wait()
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}

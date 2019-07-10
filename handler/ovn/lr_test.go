@@ -4,26 +4,6 @@ import (
 	"testing"
 )
 
-func TestLRGet(t *testing.T) {
-	ar := make(map[string]string)
-	ar["name"] = "LrTest1"
-	arg := args{
-		arg: ar,
-	}
-	ginTestPathTool(LRGet, arg, &req)
-	switch req.Code {
-	case 0:
-		t.Log(req.Message)
-		t.Log(req.Data)
-	case 10001:
-		t.Fatal(req.Message)
-	case 200200:
-		t.Fatal(req.Message)
-	default:
-		t.Error(req.Message)
-	}
-}
-
 func TestLRAdd(t *testing.T) {
 	param := make(map[string]interface{})
 	param["external_id"] = map[string]string{"a": "b"}
@@ -34,25 +14,6 @@ func TestLRAdd(t *testing.T) {
 		data: param,
 	}
 	ginTestJsonTool(LRAdd, jp, &req)
-	switch req.Code {
-	case 0:
-		t.Log(req.Message)
-	case 10001:
-		t.Fatal(req.Message)
-	case 200200:
-		t.Fatal(req.Message)
-	default:
-		t.Error(req.Message)
-	}
-}
-
-func TestLRDel(t *testing.T) {
-	ar := make(map[string]string)
-	ar["name"] = "LrTest1"
-	arg := args{
-		arg: ar,
-	}
-	ginTestPathTool(LRDel, arg, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
@@ -82,6 +43,45 @@ func TestLRList(t *testing.T) {
 		t.Error(req.Message)
 	}
 }
+func TestLRGet(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "LrTest1"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(LRGet, arg, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+		t.Log(req.Data)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+}
+
+func TestLRDel(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "LrTest1"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(LRDel, arg, &req)
+	switch req.Code {
+	case 0:
+		t.Log(req.Message)
+	case 10001:
+		t.Fatal(req.Message)
+	case 200200:
+		t.Fatal(req.Message)
+	default:
+		t.Error(req.Message)
+	}
+}
+
 
 func TestLRPAdd(t *testing.T) {
 	param := make(map[string]interface{})
