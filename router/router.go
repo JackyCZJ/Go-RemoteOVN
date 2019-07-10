@@ -116,5 +116,13 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLRP.GET("/:name",ovn.LRPList)
 	}
 
+	ovnLB := g.Group("/api/v1/esix/ovn/LB")
+	ovnLB.Use(middleware.AuthMiddleware())
+	{
+		ovnLB.PUT("/:name",ovn.LBAdd)
+		ovnLB.DELETE("/:name",ovn.LBDel)
+		ovnLB.POST("/:name",ovn.LBUpdate)
+		ovnLB.GET("/:name",ovn.LBGet)
+	}
 	return g
 }

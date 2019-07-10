@@ -41,10 +41,10 @@ Logical Router
 
 Load Balancer
 --
-- [ ] lb add
-- [ ] lb del
-- [ ] lb get
-- [ ] lb updates
+- [x] lb add
+- [x] lb del
+- [x] lb get
+- [x] lb updates
 - [ ] ls Load balance add
 - [ ] ls lb del
 - [ ] ls lb list

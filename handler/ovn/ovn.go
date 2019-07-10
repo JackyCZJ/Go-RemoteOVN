@@ -26,7 +26,6 @@ const (
 	OVNNB_SOCKET = "ovnnb_db.sock"
 )
 
-// Todo: package 的 init过早了，无法触发viper，待解决。
 func init() {
 	var err error
 	passLagerCfg := log.PassLagerCfg{
@@ -43,11 +42,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	viper.SetDefault("ovn.remoteurl","tcp://10.1.2.82:2333")
+	//if err := config.Init(""); err != nil {
+	//	panic(err)
+	//}
 	var url string
-	//y.SetDefault("ovn.remoteurl","tcp://10.1.2.82:2333")
-	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.82:2333")
 	url = viper.GetString("ovn.remoteurl")
-	//url = viper.GetString("ovn.remoteurl")
 	if viper.GetString("ovn.runmode") == "local" {
 		var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
 		if ovs_rundir == "" {
@@ -88,13 +88,6 @@ type LsRequest struct {
 	Ls string `json:"ls"`
 }
 
-//Logical switch port struct
-type LspRequest struct {
-	LsRequest
-	Lsp       string `json:"lsp"`
-	addresses string `json:"addresses"`
-	security  string `json:"security"`
-}
 
 //Address Set struct
 type ASRequest struct {
@@ -131,18 +124,12 @@ type LogicalRouterPort struct {
 	Peer           string
 	ExternalID     map[string]string
 }
-//Logical Router And Logical Bridge	operate struct
-type LRLBRequest struct {
-	Lr string `json:"lr"`
-	Lb string `json:"lb"`
-}
 
 //Logical Bridge struct
 type LBRequest struct {
-	Lb       string   `json:"lb"`
 	VipPort  string   `json:"vipPort"`
 	Protocol string   `json:"protocol"`
-	addrs    []string `json:"addrs"`
+	Addrs    []string `json:"addrs"`
 }
 
 //dhcp4_options on lsp
@@ -343,4 +330,14 @@ func ginTestJsonTool(todo gin.HandlerFunc, param jsonPackage, req *handler.Respo
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &req)
 	//	fmt.Print(req.Message)
+}
+
+func MapInterfaceToMapString(m map[interface{}]interface{}) map[string]string{
+	mapString := make(map[string]string)
+	for i, v := range m {
+		strKey := fmt.Sprintf("%v", i)
+		strValue := fmt.Sprintf("%v", v)
+		mapString[strKey] = strValue
+	}
+	return mapString
 }
