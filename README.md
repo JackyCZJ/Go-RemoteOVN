@@ -14,6 +14,8 @@ logical switch
 - [x] lsp del
 - [x] ext id add
 - [x] ext id del
+- [ ] LSP set Address
+- [ ] LSP Set Port Security
 
 ACL
 --
@@ -51,3 +53,24 @@ Load Balancer
 - [ ] lr lb add
 - [ ] lr lb del
 - [ ] lr lb list
+
+QoS
+--
+- [ ] QoS Add
+- [ ] QoS Del
+- [ ] Qos List
+
+DHCP Options
+--
+- [ ] DHCPOptions Add
+- [ ] DHCPOptions Del
+- [ ] DHCPOptions Set
+- [ ] DHCPOptions List
+
+LSP DHCP V4 v6 Options
+--
+- [ ] LSPv4Options Get
+- [ ] LSPv4Options Set
+- [ ] LSPv6Options Get
+- [ ] LSPv6Options Set
+

@@ -177,6 +177,15 @@ type LogicalRouter struct {
 	ExternalID map[string]string
 }
 
+type StaticRouter struct {
+	UUID       string				`json:"uuid"`
+	IPPrefix   string				`json:"ip_prefix"`
+	Nexthop    string 				`json:"nexthop"`
+	OutputPort [] string			`json:"output_port"`
+	Policy     [] string			`json:"policy"`
+	ExternalID map[string]string	`json:"external_id"`
+}
+
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
 //just make it change to struct again.
 func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {

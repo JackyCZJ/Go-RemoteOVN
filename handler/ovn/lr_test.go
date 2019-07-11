@@ -2,6 +2,8 @@ package ovn
 
 import (
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestLRAdd(t *testing.T) {
@@ -82,14 +84,13 @@ func TestLRDel(t *testing.T) {
 	}
 }
 
-
 func TestLRPAdd(t *testing.T) {
 	param := make(map[string]interface{})
-	param["external_ids"] = map[string]string{"a":"b",
-		"foo":"bar"}
+	param["external_ids"] = map[string]string{"a": "b",
+		"foo": "bar"}
 	param["mac"] = "54:54:54:54:54:56"
 	param["network"] = []string{"192.168.0.1/24"}
-	param["peer"]="lrp3"
+	param["peer"] = "lrp3"
 	jp := jsonPackage{
 		arg: map[string]string{
 			"name": "LrTest2",
@@ -97,7 +98,7 @@ func TestLRPAdd(t *testing.T) {
 		},
 		data: param,
 	}
-	ginTestJsonTool(LRPAdd,jp,&req)
+	ginTestJsonTool(LRPAdd, jp, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
@@ -114,8 +115,8 @@ func TestLRPAdd(t *testing.T) {
 func TestLRPDel(t *testing.T) {
 	ar := args{
 		arg: map[string]string{
-			"name":"LrTest2",
-			"port":"br-int1",
+			"name": "LrTest2",
+			"port": "br-int1",
 		},
 	}
 	ginTestPathTool(LRDel, ar, &req)
@@ -135,7 +136,7 @@ func TestLRPDel(t *testing.T) {
 func TestLRPList(t *testing.T) {
 	ar := args{
 		arg: map[string]string{
-			"name":"LrTest2",
+			"name": "LrTest2",
 		},
 	}
 	ginTestPathTool(LRPList, ar, &req)
@@ -149,5 +150,107 @@ func TestLRPList(t *testing.T) {
 		t.Fatal(req.Message)
 	default:
 		t.Error(req.Message)
+	}
+}
+
+func TestLRSRAdd(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRSRAdd(tt.args.c)
+		})
+	}
+}
+
+func TestLRSRDel(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRSRDel(tt.args.c)
+		})
+	}
+}
+
+func TestLRSRList(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRSRList(tt.args.c)
+		})
+	}
+}
+
+func TestLRLBAdd(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRLBAdd(tt.args.c)
+		})
+	}
+}
+
+func TestLRLBDel(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRLBDel(tt.args.c)
+		})
+	}
+}
+
+func TestLRLBlist(t *testing.T) {
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			LRLBlist(tt.args.c)
+		})
 	}
 }

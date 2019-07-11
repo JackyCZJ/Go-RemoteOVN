@@ -182,3 +182,111 @@ func LRPList(c *gin.Context){
 	}
 	handler.SendResponse(c,nil,LRPs)
 }
+
+var sr StaticRouter
+
+func LRSRAdd (c *gin.Context){
+	lr := c.Param("name")
+	err := c.BindJSON(&sr);if err!=nil{
+		handler.SendResponse(c,errno.ErrBind,nil)
+		return
+	}
+	cmd,err := ovndbapi.LRSRAdd(lr,sr.IPPrefix,sr.Nexthop,sr.OutputPort,sr.Policy,sr.ExternalID)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRAdd)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRAdd)
+		return
+	}
+	log.Infof("Logical Router :%s ,Add Static Router:  %s",lr,sr.IPPrefix)
+	handler.SendResponse(c, nil, nil)
+}
+
+func LRSRDel (c *gin.Context){
+	lr := c.Param("name")
+	ip := c.Param("ip")
+	cmd,err := ovndbapi.LRSRDel(lr,ip)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRDel)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRAdd)
+		return
+	}
+	log.Infof("Logical Router :%s ,Delete Static Router:  %s",lr,ip)
+	handler.SendResponse(c, nil, nil)
+}
+
+func LRSRList (c *gin.Context){
+	lr := c.Param("name")
+	cmd,err := ovndbapi.LRSRList(lr)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRGet)
+		return
+	}
+	var lrsrList []StaticRouter
+	var sr StaticRouter
+	for _,v := range cmd {
+		str, _ := jsoniter.Marshal(v)
+		_ = jsoniter.Unmarshal(str, &sr)
+		sr.ExternalID = MapInterfaceToMapString(v.ExternalID)
+		lrsrList = append(lrsrList,sr)
+	}
+	handler.SendResponse(c,nil,lrsrList)
+}
+
+
+func LRLBAdd(c *gin.Context){
+	lr := c.Param("lr")
+	lb := c.Param("lb")
+	cmd,err:=ovndbapi.LRLBAdd(lr,lb)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRAdd)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err !=nil{
+		handleOvnErr(c, err, errno.ErrLRAdd)
+		return
+	}
+	handler.SendResponse(c,nil,nil)
+}
+
+func LRLBDel(c *gin.Context){
+	lr := c.Param("lr")
+	lb := c.Param("lb")
+	cmd,err:=ovndbapi.LRLBDel(lr,lb)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRDel)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err !=nil{
+		handleOvnErr(c, err, errno.ErrLRDel)
+		return
+	}
+	handler.SendResponse(c,nil,nil)
+}
+
+func LRLBlist(c *gin.Context){
+	lr := c.Param("name")
+	cmd , err := ovndbapi.LRLBList(lr)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRDel)
+		return
+	}
+	pack :=make(map[string]interface{})
+	var packs []map[string]interface{}
+	for _,v :=range cmd{
+		pack["UUID"] = v.UUID
+		pack["Name"] = v.Name
+		pack["ExternalID"] = MapInterfaceToMapString(v.ExternalID)
+		packs = append(packs,pack)
+	}
+	handler.SendResponse(c,nil,packs)
+}
