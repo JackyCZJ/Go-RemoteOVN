@@ -22,6 +22,7 @@ func LRGet(c *gin.Context) {
 	var l  LogicalRouter
 
 	for _,v :=range lr {
+		log.Infof("%s",v.StaticRoutes)
 		l = LRStruct(v)
 	}
 	handler.SendResponse(c,nil,l)
@@ -78,6 +79,7 @@ func LRList(c *gin.Context) {
 	}
 	var rList []LogicalRouter
 	for _,v :=range lrList{
+		log.Infof("%s",v.StaticRoutes)
 		rList = append(rList,LRStruct(v))
 	}
 	handler.SendResponse(c,nil,rList)
@@ -207,15 +209,19 @@ func LRSRAdd (c *gin.Context){
 
 func LRSRDel (c *gin.Context){
 	lr := c.Param("name")
-	ip := c.Param("ip")
+	err := c.BindJSON(&sr);if err!=nil{
+		handler.SendResponse(c,errno.ErrBind,nil)
+		return
+	}
+	ip := sr.IPPrefix
 	cmd,err := ovndbapi.LRSRDel(lr,ip)
 	if err != nil {
-		handleOvnErr(c, err, errno.ErrLRDel)
+		handleOvnErr(c, err, err)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
-		handleOvnErr(c, err, errno.ErrLRAdd)
+		handleOvnErr(c, err, err)
 		return
 	}
 	log.Infof("Logical Router :%s ,Delete Static Router:  %s",lr,ip)
@@ -232,8 +238,12 @@ func LRSRList (c *gin.Context){
 	var lrsrList []StaticRouter
 	var sr StaticRouter
 	for _,v := range cmd {
+		log.Infof("%v",v)
 		str, _ := jsoniter.Marshal(v)
-		_ = jsoniter.Unmarshal(str, &sr)
+		err = jsoniter.Unmarshal(str, &sr)
+		if err != nil {
+			log.Fatal("struct unmarshal error :%v", err)
+		}
 		sr.ExternalID = MapInterfaceToMapString(v.ExternalID)
 		lrsrList = append(lrsrList,sr)
 	}
@@ -242,7 +252,7 @@ func LRSRList (c *gin.Context){
 
 
 func LRLBAdd(c *gin.Context){
-	lr := c.Param("lr")
+	lr := c.Param("name")
 	lb := c.Param("lb")
 	cmd,err:=ovndbapi.LRLBAdd(lr,lb)
 	if err != nil {

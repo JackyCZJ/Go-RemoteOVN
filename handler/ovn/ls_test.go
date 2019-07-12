@@ -104,17 +104,17 @@ func TestLsExtIds(t *testing.T) {
 }
 
 //just execute command
-//func TestEverything(t *testing.T) {
-//	cmd,_ := ovndbapi.LSExtIdsAdd("test2", map[string]string{"a": "b"})
-//	err := ovndbapi.Execute(cmd)
-//
-//	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
-//	//err := ovndbapi.Execute(cmd)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	t.Log("PASS")
-//}
+func TestEverything(t *testing.T) {
+	cmd,_ := ovndbapi.LRSRDel( "LrTest1", "10.0.1.1/24")
+	err := ovndbapi.Execute(cmd)
+
+	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
+	//err := ovndbapi.Execute(cmd)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("PASS")
+}
 
 func TestLSList(t *testing.T) {
 	ar := make(map[string]string)

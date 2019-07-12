@@ -1,6 +1,8 @@
 package ovn
 
 import (
+	"fmt"
+	"github.com/apache/trafficcontrol/traffic_stats/assert"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +10,7 @@ import (
 
 func TestLRAdd(t *testing.T) {
 	param := make(map[string]interface{})
-	param["external_id"] = map[string]string{"a": "b"}
+//	param["external_id"] = map[string]string{"a": "b"}
 	jp := jsonPackage{
 		arg: map[string]string{
 			"name": "LrTest1",
@@ -153,56 +155,44 @@ func TestLRPList(t *testing.T) {
 	}
 }
 
-func TestLRSRAdd(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRSRAdd(tt.args.c)
-		})
-	}
+var srt = map[string]interface{}{
+	"ip_prefix":"10.0.1.1/24",
+	"nexthop":"10.3.0.1",
 }
 
-func TestLRSRDel(t *testing.T) {
-	type args struct {
-		c *gin.Context
+func TestLRSRAdd(t *testing.T) {
+	jp := jsonPackage{
+		arg: map[string]string{
+			"name":"LrTest1",
+		},
+		data: srt,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRSRDel(tt.args.c)
-		})
-	}
+	ginTestJsonTool(LRSRAdd,jp,&req)
+	assert.Equal(t,req.Message,"OK")
 }
 
 func TestLRSRList(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	arg := make(map[string]string)
+	arg["name"] = "LrTest1"
+	ar := args{
+		arg: arg,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRSRList(tt.args.c)
-		})
-	}
+	ginTestPathTool(LRSRList,ar,&req)
+	assert.Equal(t,req.Message,"OK")
 }
+
+func TestLRSRDel(t *testing.T) {
+	arg := make(map[string]string)
+	arg["name"] = "LrTest1"
+	jp:=jsonPackage{
+		arg:arg,
+		data:srt,
+	}
+	ginTestJsonTool(LRSRDel,jp,&req)
+	assert.Equal(t,req.Message,"OK")
+	fmt.Printf("%s",req.Data)
+}
+
 
 func TestLRLBAdd(t *testing.T) {
 	type args struct {
