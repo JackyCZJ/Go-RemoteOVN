@@ -2,15 +2,13 @@ package ovn
 
 import (
 	"fmt"
-	"github.com/apache/trafficcontrol/traffic_stats/assert"
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
 func TestLRAdd(t *testing.T) {
 	param := make(map[string]interface{})
-//	param["external_id"] = map[string]string{"a": "b"}
+	param["external_id"] = map[string]string{"a": "b"}
 	jp := jsonPackage{
 		arg: map[string]string{
 			"name": "LrTest1",
@@ -95,7 +93,7 @@ func TestLRPAdd(t *testing.T) {
 	param["peer"] = "lrp3"
 	jp := jsonPackage{
 		arg: map[string]string{
-			"name": "LrTest2",
+			"name": "LrTest1",
 			"port": "br-int1",
 		},
 		data: param,
@@ -117,7 +115,7 @@ func TestLRPAdd(t *testing.T) {
 func TestLRPDel(t *testing.T) {
 	ar := args{
 		arg: map[string]string{
-			"name": "LrTest2",
+			"name": "LrTest1",
 			"port": "br-int1",
 		},
 	}
@@ -138,7 +136,7 @@ func TestLRPDel(t *testing.T) {
 func TestLRPList(t *testing.T) {
 	ar := args{
 		arg: map[string]string{
-			"name": "LrTest2",
+			"name": "LrTest1",
 		},
 	}
 	ginTestPathTool(LRPList, ar, &req)
@@ -195,52 +193,33 @@ func TestLRSRDel(t *testing.T) {
 
 
 func TestLRLBAdd(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	arg := make(map[string]string)
+	arg["name"] = "LrTest1"
+	arg["lb"] = "lb1"
+	ar := args{
+		arg: arg,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRLBAdd(tt.args.c)
-		})
-	}
+	ginTestPathTool(LRLBAdd,ar,&req)
+	assert.Equal(t,req.Message,"OK")
 }
 
 func TestLRLBDel(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	arg := make(map[string]string)
+	arg["name"] = "LrTest1"
+	arg["lb"] = "lb1"
+	ar := args{
+		arg: arg,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRLBDel(tt.args.c)
-		})
-	}
+	ginTestPathTool(LRLBDel,ar,&req)
+	assert.Equal(t,req.Message,"OK")
 }
 
 func TestLRLBlist(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	arg := make(map[string]string)
+	arg["name"] = "LrTest1"
+	ar := args{
+		arg: arg,
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			LRLBlist(tt.args.c)
-		})
-	}
+	ginTestPathTool(LRLBlist,ar,&req)
+	assert.Equal(t,req.Message,"OK")
 }

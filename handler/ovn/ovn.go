@@ -6,8 +6,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	goovn "github.com/eBay/go-ovn"
 	"github.com/gin-gonic/gin"
+	goovn "github.com/jackyczj/go-ovn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
@@ -239,10 +239,11 @@ func ASStruct(v *goovn.AddressSet) ASRequest {
 	return l
 }
 
-func LRStruct(v *goovn.LogicalRouter) LogicalRouter {
-	var l LogicalRouter
+func LRStruct(v *goovn.LogicalRouter)(l LogicalRouter){
 	mapString := make(map[string]string)
 	optString := make(map[string]string)
+	str, _ := jsoniter.Marshal(v)
+	err := jsoniter.Unmarshal(str, &l)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	go func() {
@@ -261,15 +262,13 @@ func LRStruct(v *goovn.LogicalRouter) LogicalRouter {
 			optString[optionKey] = optValue
 		}
 	}()
-	str, _ := jsoniter.Marshal(v)
-	err := jsoniter.Unmarshal(str, &l)
 	wg.Wait()
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
 	l.ExternalID = mapString
 	l.Options = optString
-	return l
+	return
 }
 
 //Only use to handle OVN api error!

@@ -268,7 +268,7 @@ func LRLBAdd(c *gin.Context){
 }
 
 func LRLBDel(c *gin.Context){
-	lr := c.Param("lr")
+	lr := c.Param("name")
 	lb := c.Param("lb")
 	cmd,err:=ovndbapi.LRLBDel(lr,lb)
 	if err != nil {
@@ -298,5 +298,6 @@ func LRLBlist(c *gin.Context){
 		pack["ExternalID"] = MapInterfaceToMapString(v.ExternalID)
 		packs = append(packs,pack)
 	}
+	fmt.Printf("%s",packs)
 	handler.SendResponse(c,nil,packs)
 }
