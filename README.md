@@ -47,12 +47,12 @@ Load Balancer
 - [x] lb del
 - [x] lb get
 - [x] lb updates
-- [ ] ls Load balance add
-- [ ] ls lb del
-- [ ] ls lb list
-- [ ] lr lb add
-- [ ] lr lb del
-- [ ] lr lb list
+- [x] ls Load balance add
+- [x] ls lb del
+- [x] ls lb list
+- [x] lr lb add
+- [x] lr lb del
+- [x] lr lb list
 
 QoS
 --
