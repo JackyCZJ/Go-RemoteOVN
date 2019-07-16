@@ -4,6 +4,7 @@ import (
 	_ "apiserver/config"
 	"apiserver/handler"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -130,4 +131,72 @@ func TestLSList(t *testing.T) {
 	default:
 		t.Error(req.Message)
 	}
+}
+
+func TestLSPAdd(t *testing.T) {
+	cmd,_ := ovndbapi.LSAdd("test1")
+	_ = ovndbapi.Execute(cmd)
+	ar := make(map[string]string)
+	ar["name"] = "test1"
+	ar["port"] = "br-int1"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(LSPAdd,arg,&req)
+	assert.Equal(t,"OK",req.Message)
+}
+
+
+func TestLSPList(t *testing.T) {
+	ar := make(map[string]string)
+	ar["name"] = "test1"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(LSPList,arg,&req)
+	assert.Equal(t,"OK",req.Message)
+}
+
+func TestLSPSetAddress(t *testing.T) {
+	jp :=jsonPackage{
+		arg: map[string]string{
+			"name":"br-int1",
+		},
+		data: map[string]interface{}{
+			"Addresses":[]string{
+				"127.0.0.1",
+			},
+		},
+	}
+	ginTestJsonTool(LSPSetAddress,jp,&req)
+	assert.Equal(t,"OK",req.Message)
+}
+
+func TestLSPSetSecurity(t *testing.T) {
+	jp :=jsonPackage{
+		arg: map[string]string{
+			"name":"br-int1",
+		},
+		data: map[string]interface{}{
+			"Addresses":[]string{
+				"127.0.0.1",
+			},
+		},
+	}
+	ginTestJsonTool(LSPSetSecurity,jp,&req)
+	assert.Equal(t,"OK",req.Message)
+}
+
+func TestLSPDel(t *testing.T) {
+	defer func() {
+		cmd,_ := ovndbapi.LSDel("test1")
+		_ = ovndbapi.Execute(cmd)
+	}()
+	ar := make(map[string]string)
+	ar["port"] = "br-int1"
+	arg := args{
+		arg: ar,
+	}
+	ginTestPathTool(LSPDel,arg,&req)
+	assert.Equal(t,"OK",req.Message)
 }
