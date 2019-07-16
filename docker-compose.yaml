@@ -8,17 +8,18 @@ services:
       - "6640:6640"
     command: "/usr/bin/supervisord -n"
     privileged: true
-#  apiserver-server:
-#    image: golang:1.6
-#    container_name: apiserver-server
-#    links:
-#      - ovs
-#      - apiserver-db
-#    volumes:
-#      - .:/go/src/apiserver/
-#    working_dir: /go/src/apiserver
-#    environment:
-#      DOCKER_IP: "ovs"
+  apiserver-server:
+    build: ./docker
+    container_name: apiserver-server
+    links:
+      - ovs
+      - apiserver-db
+    volumes:
+       - $HOME/go:/go
+    working_dir: /go/src/apiserver
+    ports:
+      - 8081:8080
+    tty: true
   apiserver-db:
       image: mysql:5.7.25
       container_name: apiserver-db

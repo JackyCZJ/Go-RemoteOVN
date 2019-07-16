@@ -1,0 +1,13 @@
+FROM golang
+RUN apt-get update && apt-get install -y vim
+RUN apt-get install libssl-dev
+RUN apt-get install openssl
+WORKDIR $GOPATH/src/apiserver
+
+RUN make gotool
+RUN make
+RUN make ca
+RUN ./admin.sh start
+RUN ./admin.sh status
+
+EXPOSE 8080

@@ -11,29 +11,27 @@ import (
 	"github.com/lexkong/log"
 )
 
-
-
-func LBAdd(c *gin.Context){
+func LBAdd(c *gin.Context) {
 	var lb LBRequest
-	err = c.BindJSON(&lb);if err!=nil{
+	err = c.BindJSON(&lb)
+	if err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
 	l := c.Param("name")
-	cmd, err := ovndbapi.LBAdd(l,lb.VipPort,lb.Protocol,lb.Addrs)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrASAdd)
+	cmd, err := ovndbapi.LBAdd(l, lb.VipPort, lb.Protocol, lb.Addrs)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrASAdd)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrASAdd)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrASAdd)
 		return
 	}
-	log.Infof("LoadBlancer %s Add",l)
-	handler.SendResponse(c,nil,nil)
+	log.Infof("LoadBlancer %s Add", l)
+	handler.SendResponse(c, nil, nil)
 }
-
 
 func LBDel(c *gin.Context) {
 	l := c.Param("name")
@@ -47,20 +45,20 @@ func LBDel(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
 	}
-	log.Infof("LoadBlancer Delete: %s",l)
+	log.Infof("LoadBlancer Delete: %s", l)
 	handler.SendResponse(c, nil, nil)
 }
 
-func LBGet(c *gin.Context){
+func LBGet(c *gin.Context) {
 	l := c.Param("name")
-	cmd ,err := ovndbapi.LBGet(l)
+	cmd, err := ovndbapi.LBGet(l)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
 	}
-	pack :=make(map[string]interface{},len(cmd))
+	pack := make(map[string]interface{}, len(cmd))
 
-	for _,v :=range cmd{
+	for _, v := range cmd {
 		mapString := make(map[string]string)
 		mapString = MapInterfaceToMapString(v.ExternalID)
 		pack["UUID"] = v.UUID
@@ -68,27 +66,27 @@ func LBGet(c *gin.Context){
 		pack["ExternalID"] = mapString
 	}
 
-	handler.SendResponse(c,nil,pack)
+	handler.SendResponse(c, nil, pack)
 }
 
-func LBUpdate(c *gin.Context){
+func LBUpdate(c *gin.Context) {
 	var lb LBRequest
-	err = c.BindJSON(&lb);if err!=nil{
+	err = c.BindJSON(&lb)
+	if err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
 	l := c.Param("name")
-	cmd, err := ovndbapi.LBUpdate(l,lb.VipPort,lb.Protocol,lb.Addrs)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrASAdd)
+	cmd, err := ovndbapi.LBUpdate(l, lb.VipPort, lb.Protocol, lb.Addrs)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrASAdd)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrASAdd)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrASAdd)
 		return
 	}
-	log.Infof("LoadBlancer %s Update",l)
-	handler.SendResponse(c,nil,nil)
+	log.Infof("LoadBlancer %s Update", l)
+	handler.SendResponse(c, nil, nil)
 }
-

@@ -13,7 +13,7 @@ func TestLSAdd(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test1"
 	arg := args{
-		arg:    ar,
+		arg: ar,
 	}
 	ginTestPathTool(LSAdd, arg, &req)
 	switch req.Code {
@@ -27,16 +27,13 @@ func TestLSAdd(t *testing.T) {
 		t.Error(req.Message)
 	}
 
-
-
-
 }
 
 func TestLSGet(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test1"
 	arg := args{
-		arg:    ar,
+		arg: ar,
 	}
 	ginTestPathTool(LSGet, arg, &req)
 	switch req.Code {
@@ -55,7 +52,7 @@ func TestLSDel(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "test1"
 	arg := args{
-		arg:    ar,
+		arg: ar,
 	}
 	ginTestPathTool(LSDel, arg, &req)
 	switch req.Code {
@@ -75,9 +72,9 @@ func TestLsExtIds(t *testing.T) {
 	param["external_id"] = map[string]string{"a": "b"}
 	jp := jsonPackage{
 		arg: map[string]string{
-			"name":"test2",
+			"name": "test2",
 		},
-		data:   param,
+		data: param,
 	}
 	ginTestJsonTool(LsExtIdsAdd, jp, &req)
 	switch req.Code {
@@ -105,7 +102,7 @@ func TestLsExtIds(t *testing.T) {
 
 //just execute command
 func TestEverything(t *testing.T) {
-	cmd,_ := ovndbapi.LRSRDel( "LrTest1", "10.0.1.1/24")
+	cmd, _ := ovndbapi.LRSRDel("LrTest1", "10.0.1.1/24")
 	err := ovndbapi.Execute(cmd)
 
 	//cmd, _ := ovndbapi.LSExtIdsDel("test2", map[string]string{"a": "b"})
@@ -118,11 +115,10 @@ func TestEverything(t *testing.T) {
 
 func TestLSList(t *testing.T) {
 	ar := make(map[string]string)
-	ar["name"] = "test2"
 	arg := args{
-		arg:    ar,
+		arg: ar,
 	}
-	ginTestPathTool(LSGet, arg, &req)
+	ginTestPathTool(LSList, arg, &req)
 	switch req.Code {
 	case 0:
 		fmt.Println(req.Data)

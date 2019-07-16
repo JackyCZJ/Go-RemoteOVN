@@ -7,28 +7,27 @@ import (
 	"github.com/lexkong/log"
 )
 
-
 func ACLAdd(c *gin.Context) {
 	var acl AclRequest
 	var err error
 	err = c.BindJSON(&acl)
-	if err != nil{
-		handler.SendResponse(c,errno.ErrBind,nil)
-		log.Fatal("JSON Error:",err)
+	if err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+		log.Fatal("JSON Error:", err)
 		return
 	}
 	acl.Ls = c.Param("name")
-	cmd,err := ovndbapi.ACLAdd(acl.Ls,acl.Direct,acl.Match,acl.Action,acl.Priority,acl.ExternalIds,acl.Logflag,acl.Meter)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrACLAdd)
+	cmd, err := ovndbapi.ACLAdd(acl.Ls, acl.Direct, acl.Match, acl.Action, acl.Priority, acl.ExternalIds, acl.Logflag, acl.Meter)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrACLAdd)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrACLAdd)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrACLAdd)
 		return
 	}
-	handler.SendResponse(c,nil,nil)
+	handler.SendResponse(c, nil, nil)
 
 }
 
@@ -36,30 +35,30 @@ func ACLDel(c *gin.Context) {
 	var acl AclRequest
 	var err error
 	err = c.BindJSON(&acl)
-	if err != nil{
-		handler.SendResponse(c,errno.ErrBind,nil)
-		log.Fatal("JSON Error:",err)
+	if err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+		log.Fatal("JSON Error:", err)
 		return
 	}
 	acl.Ls = c.Param("name")
-	cmd,err := ovndbapi.ACLDel(acl.Ls,acl.Direct,acl.Match,acl.Priority,acl.ExternalIds)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrACLDel)
+	cmd, err := ovndbapi.ACLDel(acl.Ls, acl.Direct, acl.Match, acl.Priority, acl.ExternalIds)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrACLDel)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrACLDel)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrACLDel)
 		return
 	}
-	handler.SendResponse(c,nil,nil)
+	handler.SendResponse(c, nil, nil)
 }
 
 func ACLList(c *gin.Context) {
 	ls := c.Param("name")
 	acls, err := ovndbapi.ACLList(ls)
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrACLList)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrACLList)
 		return
 	}
 	var acl []ACL
@@ -67,5 +66,5 @@ func ACLList(c *gin.Context) {
 		l := ACLStruct(v)
 		acl = append(acl, l)
 	}
-	handler.SendResponse(c,nil,acl)
+	handler.SendResponse(c, nil, acl)
 }

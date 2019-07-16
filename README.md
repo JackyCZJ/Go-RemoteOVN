@@ -12,10 +12,11 @@ logical switch
 - [x] ls list
 - [x] lsp add
 - [x] lsp del
+- [x] lsp List
 - [x] ext id add
 - [x] ext id del
-- [ ] LSP set Address
-- [ ] LSP Set Port Security
+- [x] LSP set Address
+- [x] LSP Set Port Security
 
 ACL
 --

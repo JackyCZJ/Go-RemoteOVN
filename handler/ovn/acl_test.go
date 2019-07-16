@@ -4,24 +4,23 @@ import (
 	"testing"
 )
 
-
 func TestACLAdd(t *testing.T) {
 	js := jsonPackage{
 		arg: map[string]string{
-			"name":"test2",
+			"name": "test2",
 		},
 		data: map[string]interface{}{
-			"ls": "test2",
-			"direct":"to-lport",
-			"match": "outport == \"96d44061-1823-428b-a7ce-f473d10eb3d0\" && ip && ip.dst == 10.97.183.61",
-			"action":"drop",
-			"priority":1001,
-			"external_ids":nil,
-			"logflag":true,
-			"meter":"",
+			"ls":           "test2",
+			"direct":       "to-lport",
+			"match":        "outport == \"96d44061-1823-428b-a7ce-f473d10eb3d0\" && ip && ip.dst == 10.97.183.61",
+			"action":       "drop",
+			"priority":     1001,
+			"external_ids": nil,
+			"logflag":      true,
+			"meter":        "",
 		},
 	}
-	ginTestJsonTool(ACLAdd,js,&req)
+	ginTestJsonTool(ACLAdd, js, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
@@ -40,7 +39,7 @@ func TestACLList(t *testing.T) {
 			"name": "test2",
 		},
 	}
-	ginTestPathTool(ACLList,ar,&req)
+	ginTestPathTool(ACLList, ar, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
@@ -57,20 +56,20 @@ func TestACLList(t *testing.T) {
 func TestACLDel(t *testing.T) {
 	js := jsonPackage{
 		arg: map[string]string{
-			"name":"test2",
+			"name": "test2",
 		},
 		data: map[string]interface{}{
-			"ls": "test2",
-			"direct":"to-lport",
-			"match": "outport == \"96d44061-1823-428b-a7ce-f473d10eb3d0\" && ip && ip.dst == 10.97.183.61",
-			"action":"drop",
-			"priority":1001,
-			"external_ids":nil,
-			"logflag":true,
-			"meter":"",
+			"ls":           "test2",
+			"direct":       "to-lport",
+			"match":        "outport == \"96d44061-1823-428b-a7ce-f473d10eb3d0\" && ip && ip.dst == 10.97.183.61",
+			"action":       "drop",
+			"priority":     1001,
+			"external_ids": nil,
+			"logflag":      true,
+			"meter":        "",
 		},
 	}
-	ginTestJsonTool(ACLDel,js,&req)
+	ginTestJsonTool(ACLDel, js, &req)
 	switch req.Code {
 	case 0:
 		t.Log(req.Message)
@@ -82,7 +81,6 @@ func TestACLDel(t *testing.T) {
 		t.Error(req.Message)
 	}
 }
-
 
 //func TestACL(t *testing.T){
 //	TestACLAdd(t)

@@ -70,74 +70,75 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	ovnLsp := g.Group("/api/v1/esix/ovn/LSP")
 	ovnLsp.Use(middleware.AuthMiddleware())
 	{
-		ovnLsp.PUT("/:name/:port",ovn.LSPAdd)
-		ovnLsp.DELETE("/:port",ovn.LSPDel)
+		ovnLsp.PUT("/:name/:port", ovn.LSPAdd)
+		ovnLsp.GET("/:name", ovn.LSPList)
+		ovnLsp.DELETE("/:port", ovn.LSPDel)
 	}
 
 	ovnLsExt := g.Group("/api/v1/esix/ovn/LsExt")
 	ovnLsExt.Use(middleware.AuthMiddleware())
 	{
-		ovnLsExt.PUT("/:name",ovn.LsExtIdsAdd)
-		ovnLsExt.DELETE("/:name",ovn.LsExtIdsDel)
+		ovnLsExt.PUT("/:name", ovn.LsExtIdsAdd)
+		ovnLsExt.DELETE("/:name", ovn.LsExtIdsDel)
 	}
 
 	ovnACL := g.Group("/api/v1/esix/ovn/ACL")
 	ovnACL.Use(middleware.AuthMiddleware())
 	{
-		ovnACL.POST("/:name",ovn.ACLAdd)
-		ovnACL.DELETE("/:name",ovn.ACLDel)
-		ovnACL.GET("/:name",ovn.ACLList)
+		ovnACL.POST("/:name", ovn.ACLAdd)
+		ovnACL.DELETE("/:name", ovn.ACLDel)
+		ovnACL.GET("/:name", ovn.ACLList)
 	}
 
 	ovnAS := g.Group("/api/v1/esix/ovn/AS")
 	ovnAS.Use(middleware.AuthMiddleware())
 	{
-		ovnAS.PUT("/:name",ovn.ASAdd)
-		ovnAS.GET("/:name",ovn.ASGet)
-		ovnAS.POST("/:name",ovn.ASUpdate)
-		ovnAS.DELETE("/:name",ovn.ASDel)
-		ovnAS.GET("",ovn.ASList)
+		ovnAS.PUT("/:name", ovn.ASAdd)
+		ovnAS.GET("/:name", ovn.ASGet)
+		ovnAS.POST("/:name", ovn.ASUpdate)
+		ovnAS.DELETE("/:name", ovn.ASDel)
+		ovnAS.GET("", ovn.ASList)
 	}
 
 	ovnLR := g.Group("/api/v1/esix/ovn/LR")
 	ovnLR.Use(middleware.AuthMiddleware())
 	{
-		ovnLR.PUT("/:name",ovn.LRAdd)
-		ovnLR.DELETE("/:name",ovn.LRDel)
-		ovnLR.GET("/:name",ovn.LRGet)
-		ovnLR.GET("",ovn.LRList)
+		ovnLR.PUT("/:name", ovn.LRAdd)
+		ovnLR.DELETE("/:name", ovn.LRDel)
+		ovnLR.GET("/:name", ovn.LRGet)
+		ovnLR.GET("", ovn.LRList)
 	}
 
 	ovnLRP := g.Group("/api/v1/esix/ovn/LRP")
 	ovnLRP.Use(middleware.AuthMiddleware())
 	{
-		ovnLRP.PUT("/:name/:port",ovn.LRPAdd)
-		ovnLRP.DELETE("/:name/:port",ovn.LRPDel)
-		ovnLRP.GET("/:name",ovn.LRPList)
+		ovnLRP.PUT("/:name/:port", ovn.LRPAdd)
+		ovnLRP.DELETE("/:name/:port", ovn.LRPDel)
+		ovnLRP.GET("/:name", ovn.LRPList)
 	}
 
 	ovnLB := g.Group("/api/v1/esix/ovn/LB")
 	ovnLB.Use(middleware.AuthMiddleware())
 	{
-		ovnLB.PUT("/:name",ovn.LBAdd)
-		ovnLB.DELETE("/:name",ovn.LBDel)
-		ovnLB.POST("/:name",ovn.LBUpdate)
-		ovnLB.GET("/:name",ovn.LBGet)
+		ovnLB.PUT("/:name", ovn.LBAdd)
+		ovnLB.DELETE("/:name", ovn.LBDel)
+		ovnLB.POST("/:name", ovn.LBUpdate)
+		ovnLB.GET("/:name", ovn.LBGet)
 	}
 
 	ovnLRSR := g.Group("/api/v1/esix/ovn/LRSR")
 	ovnLRSR.Use(middleware.AuthMiddleware())
 	{
-		ovnLRSR.PUT("/:name",ovn.LRSRAdd)
-		ovnLRSR.DELETE("/:name",ovn.LRSRDel)
-		ovnLRSR.GET("/:name",ovn.LRSRList)
+		ovnLRSR.PUT("/:name", ovn.LRSRAdd)
+		ovnLRSR.DELETE("/:name", ovn.LRSRDel)
+		ovnLRSR.GET("/:name", ovn.LRSRList)
 	}
 
-	ovnLRLB:=g.Group("/api/v1/esix/ovn/LRLB")
+	ovnLRLB := g.Group("/api/v1/esix/ovn/LRLB")
 	{
-		ovnLRLB.PUT("/:name/:lb",ovn.LRLBAdd)
-		ovnLRLB.DELETE("/:name/:lb",ovn.LRLBDel)
-		ovnLRLB.GET("/:name",ovn.LRLBlist)
+		ovnLRLB.PUT("/:name/:lb", ovn.LRLBAdd)
+		ovnLRLB.DELETE("/:name/:lb", ovn.LRLBDel)
+		ovnLRLB.GET("/:name", ovn.LRLBlist)
 	}
 	return g
 }

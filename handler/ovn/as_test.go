@@ -30,7 +30,6 @@ func TestASAdd(t *testing.T) {
 	}
 }
 
-
 func TestASGet(t *testing.T) {
 	ar := make(map[string]string)
 	ar["name"] = "asTest"

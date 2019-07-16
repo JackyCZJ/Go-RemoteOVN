@@ -3,10 +3,12 @@ package ovn
 import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
+	"sync"
 )
-
 
 //	@Summary Add new Logical switch
 //	@Description Add new Logical switch
@@ -28,7 +30,7 @@ func LSAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsAdd)
 		return
 	}
-	log.Infof("Logical Switch Add: %s",ls)
+	log.Infof("Logical Switch Add: %s", ls)
 	handler.SendResponse(c, nil, nil)
 }
 
@@ -123,7 +125,7 @@ func LsExtIdsAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
-	log.Infof("Logical Switch %s add External Id: %v",r.Name,r.ExternalID)
+	log.Infof("Logical Switch %s add External Id: %v", r.Name, r.ExternalID)
 	handler.SendResponse(c, nil, nil)
 }
 
@@ -140,7 +142,7 @@ func LsExtIdsDel(c *gin.Context) {
 	}
 	r.Name = c.Param("name")
 	command, err := ovndbapi.LSExtIdsDel(r.Name, nil)
-	if len(r.ExternalID) != 0{
+	if len(r.ExternalID) != 0 {
 		command, err = ovndbapi.LSExtIdsDel(r.Name, r.ExternalID)
 	}
 	if err != nil {
@@ -152,7 +154,7 @@ func LsExtIdsDel(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLsExidOprate)
 		return
 	}
-	log.Infof("Logical Switch %s Delete External Id: %v",r.Name,r.ExternalID)
+	log.Infof("Logical Switch %s Delete External Id: %v", r.Name, r.ExternalID)
 	handler.SendResponse(c, nil, nil)
 }
 
@@ -174,7 +176,7 @@ func LSPAdd(c *gin.Context) {
 		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Switch %s Add Port : %s ",ls,lp)
+	log.Infof("Logical Switch %s Add Port : %s ", ls, lp)
 	handler.SendResponse(c, nil, nil)
 }
 
@@ -196,6 +198,87 @@ func LSPDel(c *gin.Context) {
 		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Switch Port unattached: %s ",lp)
+	log.Infof("Logical Switch Port unattached: %s ", lp)
+	handler.SendResponse(c, nil, nil)
+}
+
+func LSPList(c *gin.Context) {
+	ls := c.Param("name")
+	lSs, err := ovndbapi.LSPList(ls)
+	if err != nil {
+		handleOvnErr(c, err, err)
+		return
+	}
+	var LspList []LogicalSwitchPort
+	var l LogicalSwitchPort
+	for _, v := range lSs {
+		mapString := make(map[string]string)
+		optString := make(map[string]string)
+		str, _ := jsoniter.Marshal(v)
+		err := jsoniter.Unmarshal(str, &l)
+		wg := sync.WaitGroup{}
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			for i, v := range v.ExternalID {
+				strKey := fmt.Sprintf("%v", i)
+				strValue := fmt.Sprintf("%v", v)
+				mapString[strKey] = strValue
+			}
+		}()
+		go func() {
+			defer wg.Done()
+			for i, v := range v.Options {
+				optionKey := fmt.Sprintf("%v", i)
+				optValue := fmt.Sprintf("%v", v)
+				optString[optionKey] = optValue
+			}
+		}()
+		wg.Wait()
+		if err != nil {
+			log.Fatal("struct unmarshal error :%v", err)
+		}
+		l.ExternalID = mapString
+		l.Options = optString
+		LspList = append(LspList, l)
+	}
+	handler.SendResponse(c, err, LspList)
+}
+
+func LSPSetAddress(c *gin.Context) {
+	var AS AS
+	if err := c.Bind(&AS); err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+	}
+	lsp := c.Param("name")
+	cmd, err := ovndbapi.LSPSetAddress(lsp, AS.Addresses...)
+	if err != nil {
+		handler.SendResponse(c, err, err)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handler.SendResponse(c, err, err)
+		return
+	}
+	handler.SendResponse(c, nil, nil)
+}
+
+func LSPSetSecurity(c *gin.Context) {
+	var S Security
+	if err := c.Bind(&S); err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+	}
+	lsp := c.Param("name")
+	cmd, err := ovndbapi.LSPSetPortSecurity(lsp, S.Security...)
+	if err != nil {
+		handler.SendResponse(c, err, err)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handler.SendResponse(c, err, err)
+		return
+	}
 	handler.SendResponse(c, nil, nil)
 }

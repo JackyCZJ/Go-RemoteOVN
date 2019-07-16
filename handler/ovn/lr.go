@@ -14,32 +14,32 @@ var lr LRRequest
 
 //Logical Router Get
 func LRGet(c *gin.Context) {
-	lr ,err := ovndbapi.LRGet(c.Param("name"))
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrLRGet)
+	lr, err := ovndbapi.LRGet(c.Param("name"))
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRGet)
 		return
 	}
-	var l  LogicalRouter
+	var l LogicalRouter
 
-	for _,v :=range lr {
-		log.Infof("%s",v.StaticRoutes)
+	for _, v := range lr {
+		log.Infof("%s", v.StaticRoutes)
 		l = LRStruct(v)
 	}
-	handler.SendResponse(c,nil,l)
+	handler.SendResponse(c, nil, l)
 }
 
 //Logical Router Add
 func LRAdd(c *gin.Context) {
 	l := c.Param("name")
 	err := c.BindJSON(&lr)
-	if err!=nil {
+	if err != nil {
 		log.Info("LR add with nil external id")
 	}
 	lr.Name = l
-	if len(lr.ExternalID)==0{
+	if len(lr.ExternalID) == 0 {
 		lr.ExternalID = nil
 	}
-	cmd, err := ovndbapi.LRAdd(lr.Name,lr.ExternalID)
+	cmd, err := ovndbapi.LRAdd(lr.Name, lr.ExternalID)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
@@ -49,7 +49,7 @@ func LRAdd(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
 	}
-	log.Infof("Logical Router Add or Update: %s",l)
+	log.Infof("Logical Router Add or Update: %s", l)
 	handler.SendResponse(c, nil, nil)
 }
 
@@ -60,87 +60,87 @@ func LRDel(c *gin.Context) {
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
-		}
+	}
 	err = ovndbapi.Execute(ocmd)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
 	}
-	log.Infof("Logical Router Delete: %s",l)
+	log.Infof("Logical Router Delete: %s", l)
 	handler.SendResponse(c, nil, nil)
 }
 
 //Logical Router List
 func LRList(c *gin.Context) {
-	lrList ,err := ovndbapi.LRList()
-	if err != nil{
-		handleOvnErr(c,err,errno.ErrLRList)
+	lrList, err := ovndbapi.LRList()
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRList)
 		return
 	}
 	var rList []LogicalRouter
-	for _,v :=range lrList{
-		log.Infof("%s",v.StaticRoutes)
-		rList = append(rList,LRStruct(v))
+	for _, v := range lrList {
+		log.Infof("%s", v.StaticRoutes)
+		rList = append(rList, LRStruct(v))
 	}
-	handler.SendResponse(c,nil,rList)
+	handler.SendResponse(c, nil, rList)
 }
 
 var LRP LRPRequest
 
 //Logical Router Port Add
-func LRPAdd(c *gin.Context){
-	err := c.BindJSON(&LRP);if err != nil {
-		handler.SendResponse(c,errno.ErrBind,nil)
+func LRPAdd(c *gin.Context) {
+	err := c.BindJSON(&LRP)
+	if err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
 	LR := c.Param("name")
 	LRP.Lrp = c.Param("port")
 	a := LRP.ExternalIds
-	fmt.Printf("%v \n",a)
+	fmt.Printf("%v \n", a)
 	cmd, err := ovndbapi.LRPAdd(LR, LRP.Lrp, LRP.Mac, LRP.Network, LRP.Peer, LRP.ExternalIds)
-	if err !=nil{
-		handleOvnErr(c,err,err)
+	if err != nil {
+		handleOvnErr(c, err, err)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err !=nil{
-		handleOvnErr(c,err,err)
+	if err != nil {
+		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Router %s Add or Update Port : %s ",LR,LRP.Lrp)
-	handler.SendResponse(c,nil,nil)
+	log.Infof("Logical Router %s Add or Update Port : %s ", LR, LRP.Lrp)
+	handler.SendResponse(c, nil, nil)
 }
 
-func LRPDel(c *gin.Context){
-	LR:=c.Param("name")
-	LP:=c.Param("port")
-	cmd,err := ovndbapi.LRPDel(LR,LP)
-	if err !=nil{
-		handleOvnErr(c,err,err)
+func LRPDel(c *gin.Context) {
+	LR := c.Param("name")
+	LP := c.Param("port")
+	cmd, err := ovndbapi.LRPDel(LR, LP)
+	if err != nil {
+		handleOvnErr(c, err, err)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err !=nil{
-		handleOvnErr(c,err,err)
+	if err != nil {
+		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Router %s  Delete Port %s",LR,LP)
-	handler.SendResponse(c,nil,nil)
+	log.Infof("Logical Router %s  Delete Port %s", LR, LP)
+	handler.SendResponse(c, nil, nil)
 }
 
-
-func LRPList(c *gin.Context){
-	LR:=c.Param("name")
-	cmd,err := ovndbapi.LRPList(LR)
-	if err !=nil{
-		handleOvnErr(c,err,err)
+func LRPList(c *gin.Context) {
+	LR := c.Param("name")
+	cmd, err := ovndbapi.LRPList(LR)
+	if err != nil {
+		handleOvnErr(c, err, err)
 		return
 	}
 	var LRPs []LogicalRouterPort
 	var LRP LogicalRouterPort
-//	ch := make(chan map[string]string)
+	//	ch := make(chan map[string]string)
 
-	for _,v :=range cmd{
+	for _, v := range cmd {
 		wg := sync.WaitGroup{}
 		str, _ := jsoniter.Marshal(v)
 		err := jsoniter.Unmarshal(str, &LRP)
@@ -156,7 +156,7 @@ func LRPList(c *gin.Context){
 				strValue := fmt.Sprintf("%v", v)
 				mapString[strKey] = strValue
 			}
-		LRP.ExternalID  = mapString
+			LRP.ExternalID = mapString
 		}()
 		go func() {
 			defer wg.Done()
@@ -166,34 +166,35 @@ func LRPList(c *gin.Context){
 				strValue := fmt.Sprintf("%v", v)
 				mapString[strKey] = strValue
 			}
-			LRP.IPv6RAConfigs =  mapString
+			LRP.IPv6RAConfigs = mapString
 		}()
 		go func() {
 			defer wg.Done()
 			mapString := make(map[string]string)
-			for i, v := range v.Options  {
+			for i, v := range v.Options {
 				strKey := fmt.Sprintf("%v", i)
 				strValue := fmt.Sprintf("%v", v)
 				mapString[strKey] = strValue
 			}
-			LRP.Options  =  mapString
+			LRP.Options = mapString
 		}()
 		wg.Wait()
 
-		LRPs = append(LRPs,LRP)
+		LRPs = append(LRPs, LRP)
 	}
-	handler.SendResponse(c,nil,LRPs)
+	handler.SendResponse(c, nil, LRPs)
 }
 
 var sr StaticRouter
 
-func LRSRAdd (c *gin.Context){
+func LRSRAdd(c *gin.Context) {
 	lr := c.Param("name")
-	err := c.BindJSON(&sr);if err!=nil{
-		handler.SendResponse(c,errno.ErrBind,nil)
+	err := c.BindJSON(&sr)
+	if err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
-	cmd,err := ovndbapi.LRSRAdd(lr,sr.IPPrefix,sr.Nexthop,sr.OutputPort,sr.Policy,sr.ExternalID)
+	cmd, err := ovndbapi.LRSRAdd(lr, sr.IPPrefix, sr.Nexthop, sr.OutputPort, sr.Policy, sr.ExternalID)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
@@ -203,18 +204,19 @@ func LRSRAdd (c *gin.Context){
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
 	}
-	log.Infof("Logical Router :%s ,Add Static Router:  %s",lr,sr.IPPrefix)
+	log.Infof("Logical Router :%s ,Add Static Router:  %s", lr, sr.IPPrefix)
 	handler.SendResponse(c, nil, nil)
 }
 
-func LRSRDel (c *gin.Context){
+func LRSRDel(c *gin.Context) {
 	lr := c.Param("name")
-	err := c.BindJSON(&sr);if err!=nil{
-		handler.SendResponse(c,errno.ErrBind,nil)
+	err := c.BindJSON(&sr)
+	if err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
 		return
 	}
 	ip := sr.IPPrefix
-	cmd,err := ovndbapi.LRSRDel(lr,ip)
+	cmd, err := ovndbapi.LRSRDel(lr, ip)
 	if err != nil {
 		handleOvnErr(c, err, err)
 		return
@@ -224,80 +226,79 @@ func LRSRDel (c *gin.Context){
 		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Router :%s ,Delete Static Router:  %s",lr,ip)
+	log.Infof("Logical Router :%s ,Delete Static Router:  %s", lr, ip)
 	handler.SendResponse(c, nil, nil)
 }
 
-func LRSRList (c *gin.Context){
+func LRSRList(c *gin.Context) {
 	lr := c.Param("name")
-	cmd,err := ovndbapi.LRSRList(lr)
+	cmd, err := ovndbapi.LRSRList(lr)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRGet)
 		return
 	}
 	var lrsrList []StaticRouter
 	var sr StaticRouter
-	for _,v := range cmd {
-		log.Infof("%v",v)
+	for _, v := range cmd {
+		log.Infof("%v", v)
 		str, _ := jsoniter.Marshal(v)
 		err = jsoniter.Unmarshal(str, &sr)
 		if err != nil {
 			log.Fatal("struct unmarshal error :%v", err)
 		}
 		sr.ExternalID = MapInterfaceToMapString(v.ExternalID)
-		lrsrList = append(lrsrList,sr)
+		lrsrList = append(lrsrList, sr)
 	}
-	handler.SendResponse(c,nil,lrsrList)
+	handler.SendResponse(c, nil, lrsrList)
 }
 
-
-func LRLBAdd(c *gin.Context){
+func LRLBAdd(c *gin.Context) {
 	lr := c.Param("name")
 	lb := c.Param("lb")
-	cmd,err:=ovndbapi.LRLBAdd(lr,lb)
+	cmd, err := ovndbapi.LRLBAdd(lr, lb)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err !=nil{
+	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRAdd)
 		return
 	}
-	handler.SendResponse(c,nil,nil)
+	handler.SendResponse(c, nil, nil)
 }
 
-func LRLBDel(c *gin.Context){
+func LRLBDel(c *gin.Context) {
 	lr := c.Param("name")
 	lb := c.Param("lb")
-	cmd,err:=ovndbapi.LRLBDel(lr,lb)
+	cmd, err := ovndbapi.LRLBDel(lr, lb)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
-	if err !=nil{
-		handleOvnErr(c, err, errno.ErrLRDel)
-		return
-	}
-	handler.SendResponse(c,nil,nil)
-}
-
-func LRLBlist(c *gin.Context){
-	lr := c.Param("name")
-	cmd , err := ovndbapi.LRLBList(lr)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrLRDel)
 		return
 	}
-	pack :=make(map[string]interface{})
+	handler.SendResponse(c, nil, nil)
+}
+
+func LRLBlist(c *gin.Context) {
+	lr := c.Param("name")
+	cmd, err := ovndbapi.LRLBList(lr)
+	if err != nil {
+		handleOvnErr(c, err, errno.ErrLRDel)
+		return
+	}
+	pack := make(map[string]interface{})
 	var packs []map[string]interface{}
-	for _,v :=range cmd{
+	for _, v := range cmd {
 		pack["UUID"] = v.UUID
 		pack["Name"] = v.Name
 		pack["ExternalID"] = MapInterfaceToMapString(v.ExternalID)
-		packs = append(packs,pack)
+		packs = append(packs, pack)
 	}
-	fmt.Printf("%s",packs)
-	handler.SendResponse(c,nil,packs)
+	fmt.Printf("%s", packs)
+	handler.SendResponse(c, nil, packs)
 }

@@ -19,8 +19,6 @@ import (
 
 var ovndbapi goovn.Client
 
-
-
 const (
 	OVS_RUNDIR   = "/var/run/openvswitch"
 	OVNNB_SOCKET = "ovnnb_db.sock"
@@ -42,7 +40,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	viper.SetDefault("ovn.remoteurl","tcp://10.1.2.82:2333")
+	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.82:2333")
 	//if err := config.Init(""); err != nil {
 	//	panic(err)
 	//}
@@ -88,7 +86,6 @@ type LsRequest struct {
 	Ls string `json:"ls"`
 }
 
-
 //Address Set struct
 type ASRequest struct {
 	Name       string            `json:"name"`
@@ -99,7 +96,7 @@ type ASRequest struct {
 
 //Logical Router struct
 type LRRequest struct {
-	Name string `json:"name"`
+	Name       string            `json:"name"`
 	ExternalID map[string]string `json:"external_id"`
 }
 
@@ -152,15 +149,27 @@ type CreateResponse struct {
 }
 
 type LogicalSwitch struct {
-	UUID         string                 `json:"uuid"`
-	Name         string                 `json:"name"`
-	Ports        []string               `json:"ports"`
-	LoadBalancer []string               `json:"load_balancer"`
-	ACLs         []string               `json:"acls"`
-	QoSRules     []string               `json:"qos_rules"`
-	DNSRecords   []string               `json:"dns_records"`
-	OtherConfig  map[string]string 		`json:"other_config"`
-	ExternalID   map[string]string      `json:"external_id"`
+	UUID         string            `json:"uuid"`
+	Name         string            `json:"name"`
+	Ports        []string          `json:"ports"`
+	LoadBalancer []string          `json:"load_balancer"`
+	ACLs         []string          `json:"acls"`
+	QoSRules     []string          `json:"qos_rules"`
+	DNSRecords   []string          `json:"dns_records"`
+	OtherConfig  map[string]string `json:"other_config"`
+	ExternalID   map[string]string `json:"external_id"`
+}
+
+type LogicalSwitchPort struct {
+	UUID          string            `json:"uuid"`
+	Name          string            `json:"name"`
+	Type          string            `json:"type"`
+	Options       map[string]string `json:"options"`
+	Addresses     []string          `json:"addresses"`
+	PortSecurity  []string          `json:"port_security"`
+	DHCPv4Options string            `json:"dhcp_v4_options"`
+	DHCPv6Options string            `json:"dhcp_v6_options"`
+	ExternalID    map[string]string `json:"external_id"`
 }
 
 type LogicalRouter struct {
@@ -177,13 +186,21 @@ type LogicalRouter struct {
 	ExternalID map[string]string
 }
 
+type AS struct {
+	Addresses []string `json:"addresses"`
+}
+
+type Security struct {
+	Security []string `json:"security"`
+}
+
 type StaticRouter struct {
-	UUID       string				`json:"uuid"`
-	IPPrefix   string				`json:"ip_prefix"`
-	Nexthop    string 				`json:"nexthop"`
-	OutputPort [] string			`json:"output_port"`
-	Policy     [] string			`json:"policy"`
-	ExternalID map[string]string	`json:"external_id"`
+	UUID       string            `json:"uuid"`
+	IPPrefix   string            `json:"ip_prefix"`
+	Nexthop    string            `json:"nexthop"`
+	OutputPort []string          `json:"output_port"`
+	Policy     []string          `json:"policy"`
+	ExternalID map[string]string `json:"external_id"`
 }
 
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
@@ -239,7 +256,7 @@ func ASStruct(v *goovn.AddressSet) ASRequest {
 	return l
 }
 
-func LRStruct(v *goovn.LogicalRouter)(l LogicalRouter){
+func LRStruct(v *goovn.LogicalRouter) (l LogicalRouter) {
 	mapString := make(map[string]string)
 	optString := make(map[string]string)
 	str, _ := jsoniter.Marshal(v)
@@ -256,7 +273,7 @@ func LRStruct(v *goovn.LogicalRouter)(l LogicalRouter){
 	}()
 	go func() {
 		defer wg.Done()
-		for i,v := range v.Options{
+		for i, v := range v.Options {
 			optionKey := fmt.Sprintf("%v", i)
 			optValue := fmt.Sprintf("%v", v)
 			optString[optionKey] = optValue
@@ -287,7 +304,6 @@ func handleOvnErr(c *gin.Context, err error, errn error) {
 	return
 }
 
-
 type args struct {
 	arg map[string]string
 }
@@ -314,8 +330,8 @@ func ginTestPathTool(todo gin.HandlerFunc, args args, req *handler.Response) {
 
 //method do nothing.
 type jsonPackage struct {
-	arg    map[string]string
-	data   map[string]interface{}
+	arg  map[string]string
+	data map[string]interface{}
 }
 
 //use to test json param func
@@ -340,7 +356,7 @@ func ginTestJsonTool(todo gin.HandlerFunc, param jsonPackage, req *handler.Respo
 	//	fmt.Print(req.Message)
 }
 
-func MapInterfaceToMapString(m map[interface{}]interface{}) map[string]string{
+func MapInterfaceToMapString(m map[interface{}]interface{}) map[string]string {
 	mapString := make(map[string]string)
 	for i, v := range m {
 		strKey := fmt.Sprintf("%v", i)
