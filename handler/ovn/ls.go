@@ -247,10 +247,11 @@ func LSPList(c *gin.Context) {
 
 func LSPSetAddress(c *gin.Context) {
 	var AS AS
-	if err := c.Bind(&AS); err != nil {
+	if err := c.BindJSON(&AS); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 	}
 	lsp := c.Param("name")
+	fmt.Print(AS.Addresses)
 	cmd, err := ovndbapi.LSPSetAddress(lsp, AS.Addresses...)
 	if err != nil {
 		handler.SendResponse(c, err, err)
@@ -266,8 +267,8 @@ func LSPSetAddress(c *gin.Context) {
 
 func LSPSetSecurity(c *gin.Context) {
 	var S Security
-	if err := c.Bind(&S); err != nil {
-		handler.SendResponse(c, errno.ErrBind, nil)
+	if err := c.BindJSON(&S); err != nil {
+		handler.SendResponse(c, errno.ErrBind, err)
 	}
 	lsp := c.Param("name")
 	cmd, err := ovndbapi.LSPSetPortSecurity(lsp, S.Security...)

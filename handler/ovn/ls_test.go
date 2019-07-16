@@ -4,8 +4,9 @@ import (
 	_ "apiserver/config"
 	"apiserver/handler"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var req handler.Response
@@ -134,7 +135,7 @@ func TestLSList(t *testing.T) {
 }
 
 func TestLSPAdd(t *testing.T) {
-	cmd,_ := ovndbapi.LSAdd("test1")
+	cmd, _ := ovndbapi.LSAdd("test1")
 	_ = ovndbapi.Execute(cmd)
 	ar := make(map[string]string)
 	ar["name"] = "test1"
@@ -142,10 +143,9 @@ func TestLSPAdd(t *testing.T) {
 	arg := args{
 		arg: ar,
 	}
-	ginTestPathTool(LSPAdd,arg,&req)
-	assert.Equal(t,"OK",req.Message)
+	ginTestPathTool(LSPAdd, arg, &req)
+	assert.Equal(t, "OK", req.Message)
 }
-
 
 func TestLSPList(t *testing.T) {
 	ar := make(map[string]string)
@@ -153,43 +153,43 @@ func TestLSPList(t *testing.T) {
 	arg := args{
 		arg: ar,
 	}
-	ginTestPathTool(LSPList,arg,&req)
-	assert.Equal(t,"OK",req.Message)
+	ginTestPathTool(LSPList, arg, &req)
+	assert.Equal(t, "OK", req.Message)
 }
 
 func TestLSPSetAddress(t *testing.T) {
-	jp :=jsonPackage{
+	jp := jsonPackage{
 		arg: map[string]string{
-			"name":"br-int1",
+			"name": "br-int1",
 		},
 		data: map[string]interface{}{
-			"Addresses":[]string{
+			"addresses": []string{
 				"127.0.0.1",
 			},
 		},
 	}
-	ginTestJsonTool(LSPSetAddress,jp,&req)
-	assert.Equal(t,"OK",req.Message)
+	ginTestJsonTool(LSPSetAddress, jp, &req)
+	assert.Equal(t, "OK", req.Message)
 }
 
 func TestLSPSetSecurity(t *testing.T) {
-	jp :=jsonPackage{
+	jp := jsonPackage{
 		arg: map[string]string{
-			"name":"br-int1",
+			"name": "br-int1",
 		},
 		data: map[string]interface{}{
-			"Addresses":[]string{
-				"127.0.0.1",
+			"security": []string{
+				"127.0.0.1:2232",
 			},
 		},
 	}
-	ginTestJsonTool(LSPSetSecurity,jp,&req)
-	assert.Equal(t,"OK",req.Message)
+	ginTestJsonTool(LSPSetSecurity, jp, &req)
+	assert.Equal(t, "OK", req.Message)
 }
 
 func TestLSPDel(t *testing.T) {
 	defer func() {
-		cmd,_ := ovndbapi.LSDel("test1")
+		cmd, _ := ovndbapi.LSDel("test1")
 		_ = ovndbapi.Execute(cmd)
 	}()
 	ar := make(map[string]string)
@@ -197,6 +197,6 @@ func TestLSPDel(t *testing.T) {
 	arg := args{
 		arg: ar,
 	}
-	ginTestPathTool(LSPDel,arg,&req)
-	assert.Equal(t,"OK",req.Message)
+	ginTestPathTool(LSPDel, arg, &req)
+	assert.Equal(t, "OK", req.Message)
 }

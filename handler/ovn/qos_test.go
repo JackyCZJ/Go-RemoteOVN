@@ -28,20 +28,10 @@ func TestQoSAdd(t *testing.T) {
 }
 
 func TestQoSDel(t *testing.T) {
-	type args struct {
-		c *gin.Context
+	jp := jsonPackage{
+
 	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			QoSDel(tt.args.c)
-		})
-	}
+	ginTestJsonTool(QoSDel, jp, &req)
 }
 
 func TestQoSList(t *testing.T) {

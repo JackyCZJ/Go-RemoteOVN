@@ -10,8 +10,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	goovn "github.com/ebay/go-ovn"
 	"github.com/gin-gonic/gin"
+	goovn "github.com/jackyczj/go-ovn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
@@ -170,9 +170,9 @@ type LogicalSwitchPort struct {
 	Type          string            `json:"type"`
 	Options       map[string]string `json:"options"`
 	Addresses     []string          `json:"addresses"`
-	PortSecurity  []string          `json:"port_security"`
-	DHCPv4Options string            `json:"dhcp_v4_options"`
-	DHCPv6Options string            `json:"dhcp_v6_options"`
+	PortSecurity  []string
+	DHCPv4Options string
+	DHCPv6Options string
 	ExternalID    map[string]string `json:"external_id"`
 }
 

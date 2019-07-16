@@ -73,6 +73,8 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLsp.PUT("/:name/:port", ovn.LSPAdd)
 		ovnLsp.GET("/:name", ovn.LSPList)
 		ovnLsp.DELETE("/:port", ovn.LSPDel)
+		ovnLsp.POST("/Security/:name",ovn.LSPSetSecurity)
+		ovnLsp.POST("/Address/:name",ovn.LSPSetAddress)
 	}
 
 	ovnLsExt := g.Group("/api/v1/esix/ovn/LsExt")
