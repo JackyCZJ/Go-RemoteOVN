@@ -28,9 +28,7 @@ func TestQoSAdd(t *testing.T) {
 }
 
 func TestQoSDel(t *testing.T) {
-	jp := jsonPackage{
-
-	}
+	jp := jsonPackage{}
 	ginTestJsonTool(QoSDel, jp, &req)
 }
 

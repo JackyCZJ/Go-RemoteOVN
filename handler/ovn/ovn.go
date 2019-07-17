@@ -207,6 +207,13 @@ type StaticRouter struct {
 	ExternalID map[string]string `json:"external_id"`
 }
 
+type DHCPOptions struct {
+	UUID       string
+	CIDR       string
+	Options    map[string]string
+	ExternalID map[string]string
+}
+
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
 //just make it change to struct again.
 func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
@@ -316,9 +323,14 @@ type args struct {
 func ginTestPathTool(todo gin.HandlerFunc, args args, req *handler.Response) {
 	url := ""
 	testUrl := ""
-	for i, arg := range args.arg {
-		url = url + "/:" + i
-		testUrl = testUrl + "/" + arg
+	if len(args.arg) != 0 {
+		for i, arg := range args.arg {
+			url = url + "/:" + i
+			testUrl = testUrl + "/" + arg
+		}
+	} else {
+		url = "/"
+		testUrl = "/"
 	}
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
@@ -343,9 +355,14 @@ func ginTestJsonTool(todo gin.HandlerFunc, param jsonPackage, req *handler.Respo
 	gin.SetMode(gin.TestMode)
 	url := ""
 	testUrl := ""
-	for i, arg := range param.arg {
-		url = url + "/:" + i
-		testUrl = testUrl + "/" + arg
+	if len(param.arg) == 0 {
+		url = "/"
+		testUrl = "/"
+	} else {
+		for i, arg := range param.arg {
+			url = url + "/:" + i
+			testUrl = testUrl + "/" + arg
+		}
 	}
 	router := gin.New()
 	jsonByte, _ := jsoniter.Marshal(param.data)
