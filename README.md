@@ -57,9 +57,9 @@ Load Balancer
 
 QoS
 --
-- [ ] QoS Add
-- [ ] QoS Del
-- [ ] Qos List
+- [x] QoS Add
+- [x] QoS Del
+- [x] Qos List
 
 DHCP Options
 --
