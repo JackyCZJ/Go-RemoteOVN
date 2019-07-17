@@ -1,10 +1,19 @@
 Edit conf/config.yaml for db info.
 ```bash
-$ cd $GOPATH
-$ git clone http://git.esix.com/jackyczj/go-restfulovn.git
-$ make ca
-$ go build .
-$ ./apiserver
+cd $GOPATH
+git clone http://git.esix.com/jackyczj/go-restfulovn.git
+make ca
+go install
+go build .
+```
+
+Run Status
+```bash
+./admin.sh start
+./admin.sh status
+./admin.sh stop
+./admin.sh restart
+
 ```
 todo
 ====
