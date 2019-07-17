@@ -133,16 +133,15 @@ type LBRequest struct {
 	Addrs    []string `json:"addrs"`
 }
 
-//dhcp4_options on lsp
-type LspDHCPv4 struct {
-}
-
-//dhcp6_options on lsp
-type LspDHCPv6 struct {
-}
-
 //QOS struct
-type QoSRequest struct {
+type QoS struct {
+	UUID       string            `json:"uuid"`
+	Priority   int               `json:"priority"`
+	Direction  string            `json:"direction"`
+	Match      string            `json:"match"`
+	Action     map[string]int    `json:"action"`
+	Bandwidth  map[string]int    `json:"bandwidth"`
+	ExternalID map[string]string `json:"external_id"`
 }
 
 type CreateResponse struct {
@@ -382,6 +381,16 @@ func MapInterfaceToMapString(m map[interface{}]interface{}) map[string]string {
 	for i, v := range m {
 		strKey := fmt.Sprintf("%v", i)
 		strValue := fmt.Sprintf("%v", v)
+		mapString[strKey] = strValue
+	}
+	return mapString
+}
+
+func MapInterfaceToMapint(m map[interface{}]interface{}) map[string]int {
+	mapString := make(map[string]int)
+	for i, v := range m {
+		strKey := fmt.Sprintf("%v", i)
+		strValue := int(v.(float64))
 		mapString[strKey] = strValue
 	}
 	return mapString

@@ -4,16 +4,65 @@
 
 package ovn
 
-import "github.com/gin-gonic/gin"
+import (
+	"apiserver/handler"
+	"apiserver/pkg/errno"
+	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
+)
 
 func QoSAdd(c *gin.Context) {
-	// @Params: ls direction priority match  action bandwidth external_ids
+	ls := c.Param("name")
+	var qos QoS
+	if err := c.BindJSON(&qos); err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+	}
+	cmd, err := ovndbapi.QoSAdd(ls, qos.Direction, qos.Priority, qos.Match, qos.Action, qos.Bandwidth, qos.ExternalID)
+	if err != nil {
+		handleOvnErr(c, err, err)
+		return
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handleOvnErr(c, err, err)
+		return
+	}
+	handler.SendResponse(c, nil, nil)
 }
 
 func QoSDel(c *gin.Context) {
-	// @Params:ls, direction, priority, match
+	ls := c.Param("name")
+	var qos QoS
+	if err := c.BindJSON(&qos); err != nil {
+		handler.SendResponse(c, errno.ErrBind, nil)
+	}
+	cmd, err := ovndbapi.QoSDel(ls, qos.Direction, qos.Priority, qos.Match)
+	if err != nil {
+		handleOvnErr(c, err, err)
+	}
+	err = ovndbapi.Execute(cmd)
+	if err != nil {
+		handleOvnErr(c, err, err)
+	}
+	handler.SendResponse(c, nil, nil)
 }
 
 func QoSList(c *gin.Context) {
-	// @Params: ls
+	ls := c.Param("name")
+	qoslist, err := ovndbapi.QoSList(ls)
+	if err != nil {
+		handleOvnErr(c, err, err)
+	}
+	var qosList []QoS
+	var qos QoS
+	for _, v := range qoslist {
+		str, _ := jsoniter.Marshal(v)
+		_ = jsoniter.Unmarshal(str, &qos)
+		qos.ExternalID = MapInterfaceToMapString(v.ExternalID)
+		qos.Bandwidth = MapInterfaceToMapint(v.Bandwidth)
+		qos.Action = MapInterfaceToMapint(v.Action)
+		qosList = append(qosList, qos)
+	}
+	handler.SendResponse(c, nil, qosList)
+
 }

@@ -5,46 +5,39 @@
 package ovn
 
 import (
+	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
-func TestQoSAdd(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			QoSAdd(tt.args.c)
-		})
-	}
+var jp = jsonPackage{
+	arg: map[string]string{
+		"name": "ls1",
+	},
+	data: map[string]interface{}{
+		"direction": "to-lport",
+		"priority":  1001,
+		"match":     `inport=="lp3"`,
+		"bandwidth": map[string]int{
+			"rate": 1234, "burst": 12345,
+		},
+	},
 }
 
-func TestQoSDel(t *testing.T) {
-	jp := jsonPackage{}
-	ginTestJsonTool(QoSDel, jp, &req)
+func TestQoSAdd(t *testing.T) {
+
+	ginTestJsonTool(QoSAdd, jp, &req)
+	fmt.Print(req)
+	assert.Equal(t, "OK", req.Message)
 }
 
 func TestQoSList(t *testing.T) {
-	type args struct {
-		c *gin.Context
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			QoSList(tt.args.c)
-		})
-	}
+	ginTestPathTool(QoSList, args{arg: map[string]string{"name": "ls1"}}, &req)
+	fmt.Print(req.Data)
+}
+
+func TestQoSDel(t *testing.T) {
+	ginTestJsonTool(QoSDel, jp, &req)
+	assert.Equal(t, "OK", req.Message)
+
 }

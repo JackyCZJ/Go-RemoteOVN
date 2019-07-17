@@ -52,12 +52,12 @@ func TestDHCPOptionsList(t *testing.T) {
 	//uuid = req.Data.(DHCPOptions).UUID
 	switch req.Data.(type) {
 	case []interface{}:
-		for _,v :=range req.Data.([]interface{}) {
+		for _, v := range req.Data.([]interface{}) {
 			switch v.(type) {
 			case interface{}:
-				str,_:= json.Marshal(v)
+				str, _ := json.Marshal(v)
 				dhcp := DHCPOptions{}
-				_ = jsoniter.Unmarshal(str,&dhcp)
+				_ = jsoniter.Unmarshal(str, &dhcp)
 				uuid = dhcp.UUID
 			default:
 				t.Fatal("Fail to GET uuid")
@@ -66,7 +66,7 @@ func TestDHCPOptionsList(t *testing.T) {
 	default:
 		t.Fatal("Fail to GET uuid")
 	}
-	
+
 }
 
 func TestLSPSetDHCPv4Options(t *testing.T) {
@@ -90,22 +90,28 @@ func TestLSPGetDHCPv4Options(t *testing.T) {
 	ginTestPathTool(LSPGetDHCPv4Options, ar, &req)
 	switch req.Data.(type) {
 	case []interface{}:
-		for _,v :=range req.Data.([]interface{}) {
+		for _, v := range req.Data.([]interface{}) {
 			switch v.(type) {
 			case interface{}:
-				str,_:= json.Marshal(v)
+				str, _ := json.Marshal(v)
 				dhcp := DHCPOptions{}
-				_ = jsoniter.Unmarshal(str,&dhcp)
-				assert.Equal(t,uuid,dhcp.UUID)
+				_ = jsoniter.Unmarshal(str, &dhcp)
+				assert.Equal(t, uuid, dhcp.UUID)
 			default:
 				t.Fatal("Fail to GET uuid")
 			}
 		}
+	case interface{}:
+		{
+			v := req.Data.(interface{})
+			str, _ := json.Marshal(v)
+			dhcp := DHCPOptions{}
+			_ = jsoniter.Unmarshal(str, &dhcp)
+			assert.Equal(t, uuid, dhcp.UUID)
+		}
 	default:
 		t.Fatal("Fail to GET uuid")
 	}
-
-
 
 }
 

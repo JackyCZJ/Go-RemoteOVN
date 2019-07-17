@@ -156,5 +156,12 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnDHCP.GET("/DHCPv6/:name",ovn.LSPGetDHCPv6Options)
 	}
 
+	ovnQoS := g.Group("/api/v1/esix/ovn/QoS")
+	ovnQoS.Use(middleware.AuthMiddleware())
+	{
+		ovnQoS.PUT("/:name",ovn.QoSAdd)
+		ovnQoS.DELETE("/:name",ovn.QoSDel)
+		ovnQoS.GET("/:name",ovn.QoSList)
+	}
 	return g
 }
