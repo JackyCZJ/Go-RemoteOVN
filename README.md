@@ -1,6 +1,10 @@
+Edit conf/config.yaml for db info.
 ```bash
-cd $GOPATH
-git clone `this url` apiserver
+$ cd $GOPATH
+$ git clone http://git.esix.com/jackyczj/go-restfulovn.git
+$ make ca
+$ go build .
+$ ./apiserver
 ```
 todo
 ====
