@@ -142,5 +142,19 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLRLB.DELETE("/:name/:lb", ovn.LRLBDel)
 		ovnLRLB.GET("/:name", ovn.LRLBlist)
 	}
+
+	ovnDHCP := g.Group("/api/v1/esix/ovn/DHCP")
+	ovnDHCP.Use(middleware.AuthMiddleware())
+	{
+		ovnDHCP.PUT("",ovn.DHCPOptionsAdd)
+		ovnDHCP.POST("",ovn.DHCPOptionSet)
+		ovnDHCP.GET("",ovn.DHCPOptionsList)
+		ovnDHCP.DELETE("/:uuid",ovn.DHCPOptionsDel)
+		ovnDHCP.PUT("/DHCPv4/:name/:uuid",ovn.LSPSetDHCPv4Options)
+		ovnDHCP.GET("/DHCPv4/:name",ovn.LSPGetDHCPv4Options)
+		ovnDHCP.PUT("/DHCPv6/:name/:uuid",ovn.LSPSetDHCPv6Options)
+		ovnDHCP.GET("/DHCPv6/:name",ovn.LSPGetDHCPv6Options)
+	}
+
 	return g
 }

@@ -63,15 +63,15 @@ QoS
 
 DHCP Options
 --
-- [ ] DHCPOptions Add
-- [ ] DHCPOptions Del
-- [ ] DHCPOptions Set
-- [ ] DHCPOptions List
+- [x] DHCPOptions Add
+- [x] DHCPOptions Del
+- [ ] DHCPOptions Set  (write but not work)
+- [x] DHCPOptions List
 
 LSP DHCP V4 v6 Options
 --
-- [ ] LSPv4Options Get
-- [ ] LSPv4Options Set
-- [ ] LSPv6Options Get
-- [ ] LSPv6Options Set
+- [x] LSPv4Options Get
+- [x] LSPv4Options Set
+- [x] LSPv6Options Get (not work)
+- [x] LSPv6Options Set (?)
 
