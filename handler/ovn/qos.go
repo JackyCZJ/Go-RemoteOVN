@@ -11,6 +11,17 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+//QOS struct
+type QoS struct {
+	UUID       string            `json:"uuid"`
+	Priority   int               `json:"priority"`
+	Direction  string            `json:"direction"`
+	Match      string            `json:"match"`
+	Action     map[string]int    `json:"action"`
+	Bandwidth  map[string]int    `json:"bandwidth"`
+	ExternalID map[string]string `json:"external_id"`
+}
+
 func QoSAdd(c *gin.Context) {
 	ls := c.Param("name")
 	var qos QoS

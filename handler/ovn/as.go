@@ -11,6 +11,14 @@ import (
 	"github.com/lexkong/log"
 )
 
+//Address Set struct
+type ASRequest struct {
+	Name       string            `json:"name"`
+	Addresses  []string          `json:"addresses"`
+	ExternalID map[string]string `json:"external_id"`
+	UUID       string            `json:"uuid"`
+}
+
 var err error
 
 func ASAdd(c *gin.Context) {

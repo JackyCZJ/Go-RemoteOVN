@@ -150,10 +150,10 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnDHCP.POST("",ovn.DHCPOptionSet)
 		ovnDHCP.GET("",ovn.DHCPOptionsList)
 		ovnDHCP.DELETE("/:uuid",ovn.DHCPOptionsDel)
-		ovnDHCP.PUT("/DHCPv4/:name/:uuid",ovn.LSPSetDHCPv4Options)
-		ovnDHCP.GET("/DHCPv4/:name",ovn.LSPGetDHCPv4Options)
-		ovnDHCP.PUT("/DHCPv6/:name/:uuid",ovn.LSPSetDHCPv6Options)
-		ovnDHCP.GET("/DHCPv6/:name",ovn.LSPGetDHCPv6Options)
+		ovnDHCP.PUT("/v4/:name/:uuid",ovn.LSPSetDHCPv4Options)
+		ovnDHCP.GET("/v4/:name",ovn.LSPGetDHCPv4Options)
+		ovnDHCP.PUT("/v6/:name/:uuid",ovn.LSPSetDHCPv6Options)
+		ovnDHCP.GET("/v6/:name",ovn.LSPGetDHCPv6Options)
 	}
 
 	ovnQoS := g.Group("/v1/api/esix/ovn/QoS")

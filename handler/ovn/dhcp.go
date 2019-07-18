@@ -12,6 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type DHCPOptions struct {
+	UUID       string				`json:"uuid"`
+	CIDR       string				`json:"cidr"`
+	Options    map[string]string	`json:"options"`
+	ExternalID map[string]string	`json:"external_id"`
+}
+
 func DHCPOptionsAdd(c *gin.Context) {
 	dhcp := DHCPOptions{}
 	if err := c.BindJSON(&dhcp); err != nil {

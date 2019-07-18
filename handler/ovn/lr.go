@@ -10,7 +10,42 @@ import (
 	"sync"
 )
 
-var lr LRRequest
+//Logical Router struct
+type LogicalRouter struct {
+	UUID    string
+	Name    string 						`json:"name"`
+	Enabled bool
+
+	Ports        []string
+	StaticRoutes []string
+	NAT          []string
+	LoadBalancer []string
+
+	Options    map[string]string
+	ExternalID map[string]string 		`json:"external_id"`
+}
+
+type LogicalRouterPort struct {
+	UUID           string   			`json:"uuid"`
+	Name           string   			`json:"name"`
+	GatewayChassis []string 			`json:"gateway_chassis"`
+	Networks       []string 			`json:"networks"`
+	MAC            string   			`json:"mac"`
+	Enabled        bool     			`json:"enabled"`
+	IPv6RAConfigs  map[string]string
+	Options        map[string]string 	`json:"options"`
+	Peer           string            	`json:"peer"`
+	ExternalID     map[string]string 	`json:"external_id"`
+}
+//Logical Router Port struct
+type StaticRouter struct {
+	UUID       string            `json:"uuid"`
+	IPPrefix   string            `json:"ip_prefix"`
+	Nexthop    string            `json:"nexthop"`
+	OutputPort []string          `json:"output_port"`
+	Policy     []string          `json:"policy"`
+	ExternalID map[string]string `json:"external_id"`
+}
 
 //Logical Router Get
 func LRGet(c *gin.Context) {
@@ -30,6 +65,7 @@ func LRGet(c *gin.Context) {
 
 //Logical Router Add
 func LRAdd(c *gin.Context) {
+	var lr LogicalRouter
 	l := c.Param("name")
 	err := c.BindJSON(&lr)
 	if err != nil {
@@ -85,7 +121,7 @@ func LRList(c *gin.Context) {
 	handler.SendResponse(c, nil, rList)
 }
 
-var LRP LRPRequest
+var LRP LogicalRouterPort
 
 //Logical Router Port Add
 func LRPAdd(c *gin.Context) {
@@ -95,10 +131,10 @@ func LRPAdd(c *gin.Context) {
 		return
 	}
 	LR := c.Param("name")
-	LRP.Lrp = c.Param("port")
-	a := LRP.ExternalIds
+	LRP.Name = c.Param("port")
+	a := LRP.ExternalID
 	fmt.Printf("%v \n", a)
-	cmd, err := ovndbapi.LRPAdd(LR, LRP.Lrp, LRP.Mac, LRP.Network, LRP.Peer, LRP.ExternalIds)
+	cmd, err := ovndbapi.LRPAdd(LR, LRP.Name, LRP.MAC, LRP.Networks, LRP.Peer, LRP.ExternalID)
 	if err != nil {
 		handleOvnErr(c, err, err)
 		return
@@ -108,7 +144,7 @@ func LRPAdd(c *gin.Context) {
 		handleOvnErr(c, err, err)
 		return
 	}
-	log.Infof("Logical Router %s Add or Update Port : %s ", LR, LRP.Lrp)
+	log.Infof("Logical Router %s Add or Update Port : %s ", LR, LRP.Name)
 	handler.SendResponse(c, nil, nil)
 }
 

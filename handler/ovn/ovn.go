@@ -63,156 +63,6 @@ func init() {
 	}
 }
 
-//ACL Request struct
-type AclRequest struct {
-	Ls          string            `json:"ls"`
-	Direct      string            `json:"direct"`
-	Match       string            `json:"match"`
-	Action      string            `json:"action"`
-	Priority    int               `json:"priority"`
-	ExternalIds map[string]string `json:"external_ids"`
-	Logflag     bool              `json:"logflag"`
-	Meter       string            `json:"meter"`
-}
-
-type ACL struct {
-	UUID       string
-	Action     string
-	Direction  string
-	Match      string
-	Priority   int
-	Log        bool
-	ExternalID map[string]string
-}
-
-//Logical switch struct
-type LsRequest struct {
-	Ls string `json:"ls"`
-}
-
-//Address Set struct
-type ASRequest struct {
-	Name       string            `json:"name"`
-	Addresses  []string          `json:"addresses"`
-	ExternalID map[string]string `json:"external_id"`
-	UUID       string            `json:"uuid"`
-}
-
-//Logical Router struct
-type LRRequest struct {
-	Name       string            `json:"name"`
-	ExternalID map[string]string `json:"external_id"`
-}
-
-//Logical Router Port struct
-type LRPRequest struct {
-	Lrp         string            `json:"lrp"`
-	Mac         string            `json:"mac"`
-	Network     []string          `json:"network"`
-	Peer        string            `json:"peer"`
-	ExternalIds map[string]string `json:"external_ids"`
-}
-
-type LogicalRouterPort struct {
-	UUID           string
-	Name           string
-	GatewayChassis []string
-	Networks       []string
-	MAC            string
-	Enabled        bool
-	IPv6RAConfigs  map[string]string
-	Options        map[string]string
-	Peer           string
-	ExternalID     map[string]string
-}
-
-//Logical Bridge struct
-type LBRequest struct {
-	VipPort  string   `json:"vipPort"`
-	Protocol string   `json:"protocol"`
-	Addrs    []string `json:"addrs"`
-}
-
-//QOS struct
-type QoS struct {
-	UUID       string            `json:"uuid"`
-	Priority   int               `json:"priority"`
-	Direction  string            `json:"direction"`
-	Match      string            `json:"match"`
-	Action     map[string]int    `json:"action"`
-	Bandwidth  map[string]int    `json:"bandwidth"`
-	ExternalID map[string]string `json:"external_id"`
-}
-
-type CreateResponse struct {
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	Action string `json:"action"`
-	Status string `json:"status"`
-}
-
-type LogicalSwitch struct {
-	UUID         string            `json:"uuid"`
-	Name         string            `json:"name"`
-	Ports        []string          `json:"ports"`
-	LoadBalancer []string          `json:"load_balancer"`
-	ACLs         []string          `json:"acls"`
-	QoSRules     []string          `json:"qos_rules"`
-	DNSRecords   []string          `json:"dns_records"`
-	OtherConfig  map[string]string `json:"other_config"`
-	ExternalID   map[string]string `json:"external_id"`
-}
-
-type LogicalSwitchPort struct {
-	UUID          string            `json:"uuid"`
-	Name          string            `json:"name"`
-	Type          string            `json:"type"`
-	Options       map[string]string `json:"options"`
-	Addresses     []string          `json:"addresses"`
-	PortSecurity  []string
-	DHCPv4Options string
-	DHCPv6Options string
-	ExternalID    map[string]string `json:"external_id"`
-}
-
-type LogicalRouter struct {
-	UUID    string
-	Name    string
-	Enabled bool
-
-	Ports        []string
-	StaticRoutes []string
-	NAT          []string
-	LoadBalancer []string
-
-	Options    map[string]string
-	ExternalID map[string]string
-}
-
-type AS struct {
-	Addresses []string `json:"addresses"`
-}
-
-type Security struct {
-	Security []string `json:"security"`
-}
-
-type StaticRouter struct {
-	UUID       string            `json:"uuid"`
-	IPPrefix   string            `json:"ip_prefix"`
-	Nexthop    string            `json:"nexthop"`
-	OutputPort []string          `json:"output_port"`
-	Policy     []string          `json:"policy"`
-	ExternalID map[string]string `json:"external_id"`
-}
-
-type DHCPOptions struct {
-	UUID       string
-	CIDR       string
-	Options    map[string]string
-	ExternalID map[string]string
-}
-
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}
 //just make it change to struct again.
 func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
@@ -226,11 +76,11 @@ func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 	return l
 }
 
-func ACLStruct(v *goovn.ACL) ACL {
-	var l ACL
+func ACLStruct(v *goovn.ACL) AclRequest {
+	var l AclRequest
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID = MapInterfaceToMapString(v.ExternalID)
+	l.ExternalIds = MapInterfaceToMapString(v.ExternalID)
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}

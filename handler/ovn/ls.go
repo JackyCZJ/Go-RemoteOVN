@@ -10,6 +10,34 @@ import (
 	"sync"
 )
 
+type LogicalSwitch struct {
+	UUID         string            `json:"uuid"`
+	Name         string            `json:"name"`
+	Ports        []string          `json:"ports"`
+	LoadBalancer []string          `json:"load_balancer"`
+	ACLs         []string          `json:"acls"`
+	QoSRules     []string          `json:"qos_rules"`
+	DNSRecords   []string          `json:"dns_records"`
+	OtherConfig  map[string]string `json:"other_config"`
+	ExternalID   map[string]string `json:"external_id"`
+}
+
+type LogicalSwitchPort struct {
+	UUID      string            `json:"uuid"`
+	Name      string            `json:"name"`
+	Type      string            `json:"type"`
+	Options   map[string]string `json:"options"`
+	Addresses []string          `json:"addresses"`
+	PortSecurity
+	DHCPv4Options string
+	DHCPv6Options string
+	ExternalID    map[string]string `json:"external_id"`
+}
+
+type PortSecurity struct {
+	PortSecurity []string `json:"port_security"`
+}
+
 //	@Summary Add new Logical switch
 //	@Description Add new Logical switch
 //	@Tags	Logical switch
@@ -246,7 +274,7 @@ func LSPList(c *gin.Context) {
 }
 
 func LSPSetAddress(c *gin.Context) {
-	var AS AS
+	var AS ASRequest
 	if err := c.BindJSON(&AS); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 	}
@@ -266,12 +294,12 @@ func LSPSetAddress(c *gin.Context) {
 }
 
 func LSPSetSecurity(c *gin.Context) {
-	var S Security
+	var S PortSecurity
 	if err := c.BindJSON(&S); err != nil {
 		handler.SendResponse(c, errno.ErrBind, err)
 	}
 	lsp := c.Param("name")
-	cmd, err := ovndbapi.LSPSetPortSecurity(lsp, S.Security...)
+	cmd, err := ovndbapi.LSPSetPortSecurity(lsp, S.PortSecurity...)
 	if err != nil {
 		handler.SendResponse(c, err, err)
 		return

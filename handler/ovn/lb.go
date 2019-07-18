@@ -11,6 +11,13 @@ import (
 	"github.com/lexkong/log"
 )
 
+//Logical Bridge struct
+type LBRequest struct {
+	VipPort  string   `json:"vipPort"`
+	Protocol string   `json:"protocol"`
+	Addrs    []string `json:"addrs"`
+}
+
 func LBAdd(c *gin.Context) {
 	var lb LBRequest
 	err = c.BindJSON(&lb)

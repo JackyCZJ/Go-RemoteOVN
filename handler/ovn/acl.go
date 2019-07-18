@@ -11,6 +11,18 @@ import (
 	"github.com/lexkong/log"
 )
 
+//ACL Request struct
+type AclRequest struct {
+	UUID        string            `json:"uuid"`
+	Direct      string            `json:"direct"`
+	Match       string            `json:"match"`
+	Action      string            `json:"action"`
+	Priority    int               `json:"priority"`
+	ExternalIds map[string]string `json:"external_ids"`
+	Logflag     bool              `json:"logflag"`
+	Meter       string            `json:"meter"`
+}
+
 func ACLAdd(c *gin.Context) {
 	var acl AclRequest
 	var err error
@@ -20,8 +32,8 @@ func ACLAdd(c *gin.Context) {
 		log.Fatal("JSON Error:", err)
 		return
 	}
-	acl.Ls = c.Param("name")
-	cmd, err := ovndbapi.ACLAdd(acl.Ls, acl.Direct, acl.Match, acl.Action, acl.Priority, acl.ExternalIds, acl.Logflag, acl.Meter)
+	Ls := c.Param("name")
+	cmd, err := ovndbapi.ACLAdd(Ls, acl.Direct, acl.Match, acl.Action, acl.Priority, acl.ExternalIds, acl.Logflag, acl.Meter)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrACLAdd)
 		return
@@ -44,8 +56,8 @@ func ACLDel(c *gin.Context) {
 		log.Fatal("JSON Error:", err)
 		return
 	}
-	acl.Ls = c.Param("name")
-	cmd, err := ovndbapi.ACLDel(acl.Ls, acl.Direct, acl.Match, acl.Priority, acl.ExternalIds)
+	Ls := c.Param("name")
+	cmd, err := ovndbapi.ACLDel(Ls, acl.Direct, acl.Match, acl.Priority, acl.ExternalIds)
 	if err != nil {
 		handleOvnErr(c, err, errno.ErrACLDel)
 		return
@@ -65,7 +77,7 @@ func ACLList(c *gin.Context) {
 		handleOvnErr(c, err, errno.ErrACLList)
 		return
 	}
-	var acl []ACL
+	var acl []AclRequest
 	for _, v := range acls {
 		l := ACLStruct(v)
 		acl = append(acl, l)

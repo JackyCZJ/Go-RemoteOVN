@@ -11,10 +11,10 @@ func TestASAdd(t *testing.T) {
 		},
 		data: map[string]interface{}{
 			"name": "asTest",
-			"Addresses": []string{
+			"addresses": []string{
 				"127.0.0.1",
 			},
-			"ExternalIds": nil,
+			"external_id": nil,
 		},
 	}
 	ginTestJsonTool(ASAdd, js, &req)

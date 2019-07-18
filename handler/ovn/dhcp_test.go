@@ -15,8 +15,8 @@ func TestDHCPOptionsAdd(t *testing.T) {
 	jp := jsonPackage{
 		arg: map[string]string{},
 		data: map[string]interface{}{
-			"CIDR": "192.168.0.0/24",
-			"OPTIONS": map[string]string{
+			"cidr": "192.168.0.0/24",
+			"options": map[string]string{
 				"server_id":  "192.168.1.1",
 				"server_mac": "54:54:54:54:54:54",
 				"lease_time": "6000",
@@ -115,27 +115,27 @@ func TestLSPGetDHCPv4Options(t *testing.T) {
 
 }
 
-func TestLSPSetDHCPv6Options(t *testing.T) {
-	ar := args{
-		arg: map[string]string{
-			"name": "br-int1",
-			"uuid": "5a5e48fc-0698-405d-a3ba-aae68fa85e6f",
-		},
-	}
-	ginTestPathTool(LSPSetDHCPv6Options, ar, &req)
-	assert.Equal(t, "OK", req.Message)
-}
+//func TestLSPSetDHCPv6Options(t *testing.T) {
+//	ar := args{
+//		arg: map[string]string{
+//			"name": "br-int1",
+//			"uuid": "5a5e48fc-0698-405d-a3ba-aae68fa85e6f",
+//		},
+//	}
+//	ginTestPathTool(LSPSetDHCPv6Options, ar, &req)
+//	assert.Equal(t, "OK", req.Message)
+//}
 
-func TestLSPGetDHCPv6Options(t *testing.T) {
-	ar := args{
-		arg: map[string]string{
-			"name": "br-int1",
-		},
-	}
-	ginTestPathTool(LSPGetDHCPv6Options, ar, &req)
-	assert.Equal(t, "OK", req.Message)
-
-}
+//func TestLSPGetDHCPv6Options(t *testing.T) {
+//	ar := args{
+//		arg: map[string]string{
+//			"name": "br-int1",
+//		},
+//	}
+//	ginTestPathTool(LSPGetDHCPv6Options, ar, &req)
+//	assert.Equal(t, "OK", req.Message)
+//
+//}
 
 func TestDHCPOptionsDel(t *testing.T) {
 	ar := args{

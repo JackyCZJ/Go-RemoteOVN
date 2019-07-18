@@ -10,7 +10,6 @@ func TestACLAdd(t *testing.T) {
 			"name": "test2",
 		},
 		data: map[string]interface{}{
-			"ls":           "test2",
 			"direct":       "to-lport",
 			"match":        "outport == \"96d44061-1823-428b-a7ce-f473d10eb3d0\" && ip && ip.dst == 10.97.183.61",
 			"action":       "drop",
