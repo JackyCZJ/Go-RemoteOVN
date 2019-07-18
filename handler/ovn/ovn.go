@@ -217,15 +217,9 @@ type DHCPOptions struct {
 //just make it change to struct again.
 func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 	var l LogicalSwitch
-	mapString := make(map[string]string)
-	for i, v := range v.ExternalID {
-		strKey := fmt.Sprintf("%v", i)
-		strValue := fmt.Sprintf("%v", v)
-		mapString[strKey] = strValue
-	}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID = mapString
+	l.ExternalID = MapInterfaceToMapString(v.ExternalID)
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
@@ -234,15 +228,9 @@ func logicalSwitchStruct(v *goovn.LogicalSwitch) LogicalSwitch {
 
 func ACLStruct(v *goovn.ACL) ACL {
 	var l ACL
-	mapString := make(map[string]string)
-	for i, v := range v.ExternalID {
-		strKey := fmt.Sprintf("%v", i)
-		strValue := fmt.Sprintf("%v", v)
-		mapString[strKey] = strValue
-	}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID = mapString
+	l.ExternalID = MapInterfaceToMapString(v.ExternalID)
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
@@ -251,15 +239,9 @@ func ACLStruct(v *goovn.ACL) ACL {
 
 func ASStruct(v *goovn.AddressSet) ASRequest {
 	var l ASRequest
-	mapString := make(map[string]string)
-	for i, v := range v.ExternalID {
-		strKey := fmt.Sprintf("%v", i)
-		strValue := fmt.Sprintf("%v", v)
-		mapString[strKey] = strValue
-	}
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
-	l.ExternalID = mapString
+	l.ExternalID = MapInterfaceToMapString(v.ExternalID)
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
@@ -267,34 +249,22 @@ func ASStruct(v *goovn.AddressSet) ASRequest {
 }
 
 func LRStruct(v *goovn.LogicalRouter) (l LogicalRouter) {
-	mapString := make(map[string]string)
-	optString := make(map[string]string)
 	str, _ := jsoniter.Marshal(v)
 	err := jsoniter.Unmarshal(str, &l)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		for i, v := range v.ExternalID {
-			strKey := fmt.Sprintf("%v", i)
-			strValue := fmt.Sprintf("%v", v)
-			mapString[strKey] = strValue
-		}
+		l.ExternalID = MapInterfaceToMapString(v.ExternalID)
 	}()
 	go func() {
 		defer wg.Done()
-		for i, v := range v.Options {
-			optionKey := fmt.Sprintf("%v", i)
-			optValue := fmt.Sprintf("%v", v)
-			optString[optionKey] = optValue
-		}
+		l.Options = MapInterfaceToMapString(v.Options)
 	}()
 	wg.Wait()
 	if err != nil {
 		log.Fatal("struct unmarshal error :%v", err)
 	}
-	l.ExternalID = mapString
-	l.Options = optString
 	return
 }
 
