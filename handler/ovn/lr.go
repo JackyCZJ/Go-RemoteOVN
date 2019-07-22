@@ -13,7 +13,7 @@ import (
 //Logical Router struct
 type LogicalRouter struct {
 	UUID    string
-	Name    string 						`json:"name"`
+	Name    string `json:"name"`
 	Enabled bool
 
 	Ports        []string
@@ -22,21 +22,22 @@ type LogicalRouter struct {
 	LoadBalancer []string
 
 	Options    map[string]string
-	ExternalID map[string]string 		`json:"external_id"`
+	ExternalID map[string]string `json:"external_id"`
 }
 
 type LogicalRouterPort struct {
-	UUID           string   			`json:"uuid"`
-	Name           string   			`json:"name"`
-	GatewayChassis []string 			`json:"gateway_chassis"`
-	Networks       []string 			`json:"networks"`
-	MAC            string   			`json:"mac"`
-	Enabled        bool     			`json:"enabled"`
+	UUID           string   `json:"uuid"`
+	Name           string   `json:"name"`
+	GatewayChassis []string `json:"gateway_chassis"`
+	Networks       []string `json:"networks"`
+	MAC            string   `json:"mac"`
+	Enabled        bool     `json:"enabled"`
 	IPv6RAConfigs  map[string]string
-	Options        map[string]string 	`json:"options"`
-	Peer           string            	`json:"peer"`
-	ExternalID     map[string]string 	`json:"external_id"`
+	Options        map[string]string `json:"options"`
+	Peer           string            `json:"peer"`
+	ExternalID     map[string]string `json:"external_id"`
 }
+
 //Logical Router Port struct
 type StaticRouter struct {
 	UUID       string            `json:"uuid"`

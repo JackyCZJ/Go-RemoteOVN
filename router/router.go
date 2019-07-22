@@ -73,8 +73,8 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		ovnLsp.PUT("/:name/:port", ovn.LSPAdd)
 		ovnLsp.GET("/:name", ovn.LSPList)
 		ovnLsp.DELETE("/:port", ovn.LSPDel)
-		ovnLsp.POST("/Security/:name",ovn.LSPSetSecurity)
-		ovnLsp.POST("/Address/:name",ovn.LSPSetAddress)
+		ovnLsp.POST("/Security/:name", ovn.LSPSetSecurity)
+		ovnLsp.POST("/Address/:name", ovn.LSPSetAddress)
 	}
 
 	ovnLsExt := g.Group("/v1/api/esix/ovn/LsExt")
@@ -146,22 +146,31 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	ovnDHCP := g.Group("/v1/api/esix/ovn/DHCP")
 	ovnDHCP.Use(middleware.AuthMiddleware())
 	{
-		ovnDHCP.PUT("",ovn.DHCPOptionsAdd)
-		ovnDHCP.POST("",ovn.DHCPOptionSet)
-		ovnDHCP.GET("",ovn.DHCPOptionsList)
-		ovnDHCP.DELETE("/:uuid",ovn.DHCPOptionsDel)
-		ovnDHCP.PUT("/v4/:name/:uuid",ovn.LSPSetDHCPv4Options)
-		ovnDHCP.GET("/v4/:name",ovn.LSPGetDHCPv4Options)
-		ovnDHCP.PUT("/v6/:name/:uuid",ovn.LSPSetDHCPv6Options)
-		ovnDHCP.GET("/v6/:name",ovn.LSPGetDHCPv6Options)
+		ovnDHCP.PUT("", ovn.DHCPOptionsAdd)
+		ovnDHCP.POST("", ovn.DHCPOptionSet)
+		ovnDHCP.GET("", ovn.DHCPOptionsList)
+		ovnDHCP.DELETE("/:uuid", ovn.DHCPOptionsDel)
+		ovnDHCP.PUT("/v4/:name/:uuid", ovn.LSPSetDHCPv4Options)
+		ovnDHCP.GET("/v4/:name", ovn.LSPGetDHCPv4Options)
+		ovnDHCP.PUT("/v6/:name/:uuid", ovn.LSPSetDHCPv6Options)
+		ovnDHCP.GET("/v6/:name", ovn.LSPGetDHCPv6Options)
 	}
 
 	ovnQoS := g.Group("/v1/api/esix/ovn/QoS")
 	ovnQoS.Use(middleware.AuthMiddleware())
 	{
-		ovnQoS.PUT("/:name",ovn.QoSAdd)
-		ovnQoS.DELETE("/:name",ovn.QoSDel)
-		ovnQoS.GET("/:name",ovn.QoSList)
+		ovnQoS.PUT("/:name", ovn.QoSAdd)
+		ovnQoS.DELETE("/:name", ovn.QoSDel)
+		ovnQoS.GET("/:name", ovn.QoSList)
 	}
+
+	ovnNAT := g.Group("/v1/api/esix/ovn/NAT")
+	ovnQoS.Use(middleware.AuthMiddleware())
+	{
+		ovnNAT.GET("/:name",ovn.LRNATList)
+		ovnNAT.PUT("/:name",ovn.LRNATAdd)
+		ovnNAT.DELETE("/:name",ovn.LRNATDel)
+	}
+
 	return g
 }

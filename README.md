@@ -88,3 +88,6 @@ LSP DHCP V4 v6 Options
 - [x] LSPv6Options Get (not work)
 - [x] LSPv6Options Set (?)
 
+NAT
+--
+- [x] LR NAT OPTION
