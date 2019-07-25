@@ -21,14 +21,14 @@ import (
 	"sync"
 )
 
-var ovndbapi goovn.Client
+var ovndbapi = newClient()
 
 const (
 	OVS_RUNDIR   = "/var/run/openvswitch"
 	OVNNB_SOCKET = "ovnnb_db.sock"
 )
 
-func init() {
+func newClient() goovn.Client{
 	var err error
 	passLagerCfg := log.PassLagerCfg{
 		Writers:        viper.GetString("log.writers"),
@@ -44,7 +44,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.82:2333")
+	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.11:2333")
 	//if err := config.Init(""); err != nil {
 	//	panic(err)
 	//}
@@ -57,10 +57,11 @@ func init() {
 		}
 		url = "unix:" + ovs_rundir + "/" + OVNNB_SOCKET
 	}
-	ovndbapi, err = goovn.NewClient(&goovn.Config{Addr: url})
+	client, err := goovn.NewClient(&goovn.Config{Addr: url})
 	if err != nil {
 		panic(err)
 	}
+	return client
 }
 
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}

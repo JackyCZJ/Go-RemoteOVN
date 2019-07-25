@@ -24,7 +24,7 @@ db:
   password: root
 docker_db:
   name: db_apiserver
-  addr: apiserver-db:3306
+  addr: 127.0.0.1:3306
   username: root
   password: root
 
@@ -32,4 +32,4 @@ ovn:
   OVS_RUNDIR: /var/run/openvswitch
   OVNNB_SOCKET: ovnnb_db.sock
   runmode: remote
-  remoteurl: tcp://10.1.2.82:2333
+  remoteurl: tcp://10.1.2.11:2333

@@ -1,4 +1,13 @@
-Edit conf/config.yaml for db info.
+## GO-RemoteOVN
+
+- Control ovn by restful api. 
+- go to `handler/ovn/` see test file to know schema of data. 
+- Edit `conf/config.yaml` for db info.
+if not need to login for edit ovn , go to ``router/router.go`` to delete all ``middleware.AuthMiddleware()``.
+
+----------------------
+### usage
+
 ```bash
 cd $GOPATH
 git clone http://git.esix.com/jackyczj/go-restfulovn.git
@@ -6,14 +15,19 @@ make ca
 go install
 go build .
 ```
+#### OVN Option
+```bash
+ovn-nbctl set-connection ptcp:PORT[:IP] //for remote connection
+ovn-nbctl set-connection pssl:PORT[:IP] //for remote secure connection
+```
+ 
 
-Run Status
+#### Run Status
 ```bash
 ./admin.sh start
 ./admin.sh status
 ./admin.sh stop
 ./admin.sh restart
-
 ```
 todo
 ====
