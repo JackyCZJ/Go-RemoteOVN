@@ -42,7 +42,7 @@ func DHCPOptionSet(c *gin.Context) {
 	if err := c.BindJSON(&dhcp); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
 	}
-	cmd, err := ovndbapi.DHCPOptionsSet(dhcp.CIDR, dhcp.Options, dhcp.ExternalID)
+	cmd, err := ovndbapi.DHCPOptionsSet(dhcp.UUID, dhcp.Options, dhcp.ExternalID)
 	if err != nil {
 		handleOvnErr(c, err, err)
 		return

@@ -4,6 +4,7 @@
 - go to `handler/ovn/` see test file to know schema of data. 
 - Edit `conf/config.yaml` for db info.
 if not need to login for edit ovn , go to ``router/router.go`` to delete all ``middleware.AuthMiddleware()``.
+- Base on [ebay/go-ovn](https://github.com/ebay/go-ovn) , use fork [JackyCZJ/go-ovn](https://www.github.com/jackyczj/go-ovn)
 
 ----------------------
 ### usage
@@ -92,7 +93,7 @@ DHCP Options
 --
 - [x] DHCPOptions Add
 - [x] DHCPOptions Del
-- [ ] DHCPOptions Set  (write but not work)
+- [x] DHCPOptions Set
 - [x] DHCPOptions List
 
 LSP DHCP V4 v6 Options
