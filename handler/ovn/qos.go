@@ -7,6 +7,7 @@ package ovn
 import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
+
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -46,10 +47,12 @@ func QoSDel(c *gin.Context) {
 	var qos QoS
 	if err := c.BindJSON(&qos); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
+		return
 	}
 	cmd, err := ovndbapi.QoSDel(ls, qos.Direction, qos.Priority, qos.Match)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
@@ -63,6 +66,7 @@ func QoSList(c *gin.Context) {
 	qoslist, err := ovndbapi.QoSList(ls)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	var qosList []QoS
 	var qos QoS

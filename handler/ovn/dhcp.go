@@ -7,6 +7,7 @@ package ovn
 import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
+
 	jsoniter "github.com/json-iterator/go"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func DHCPOptionsAdd(c *gin.Context) {
 	dhcp := DHCPOptions{}
 	if err := c.BindJSON(&dhcp); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
+		return
 	}
 	cmd, err := ovndbapi.DHCPOptionsAdd(dhcp.CIDR, dhcp.Options, dhcp.ExternalID)
 	if err != nil {
@@ -41,6 +43,7 @@ func DHCPOptionSet(c *gin.Context) {
 	dhcp := DHCPOptions{}
 	if err := c.BindJSON(&dhcp); err != nil {
 		handler.SendResponse(c, errno.ErrBind, nil)
+		return
 	}
 	cmd, err := ovndbapi.DHCPOptionsSet(dhcp.UUID, dhcp.Options, dhcp.ExternalID)
 	if err != nil {
@@ -93,6 +96,7 @@ func LSPSetDHCPv4Options(c *gin.Context) {
 	cmd, err := ovndbapi.LSPSetDHCPv4Options(lsp, uuid)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
@@ -107,6 +111,7 @@ func LSPGetDHCPv4Options(c *gin.Context) {
 	cmd, err := ovndbapi.LSPGetDHCPv4Options(lsp)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	dhcp := DHCPOptions{}
 	str, _ := jsoniter.Marshal(cmd)
@@ -124,6 +129,7 @@ func LSPSetDHCPv6Options(c *gin.Context) {
 	cmd, err := ovndbapi.LSPSetDHCPv6Options(lsp, uuid)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
@@ -139,6 +145,7 @@ func LSPGetDHCPv6Options(c *gin.Context) {
 	cmd, err := ovndbapi.LSPGetDHCPv6Options(lsp)
 	if err != nil {
 		handleOvnErr(c, err, err)
+		return
 	}
 	dhcp := DHCPOptions{}
 	str, _ := jsoniter.Marshal(cmd)

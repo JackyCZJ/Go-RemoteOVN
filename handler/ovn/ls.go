@@ -4,10 +4,11 @@ import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
 	"fmt"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
-	"sync"
 )
 
 type LogicalSwitch struct {
@@ -270,7 +271,7 @@ func LSPList(c *gin.Context) {
 		l.Options = optString
 		LspList = append(LspList, l)
 	}
-	handler.SendResponse(c, err, LspList)
+	handler.SendResponse(c, nil, LspList)
 }
 
 func LSPSetAddress(c *gin.Context) {

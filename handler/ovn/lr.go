@@ -4,10 +4,11 @@ import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
 	"fmt"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
-	"sync"
 )
 
 //Logical Router struct
@@ -56,7 +57,10 @@ func LRGet(c *gin.Context) {
 		return
 	}
 	var l LogicalRouter
-
+	if len(lr) == 0 {
+		handler.SendResponse(c, errno.ErrLRGet, nil)
+		return
+	}
 	for _, v := range lr {
 		log.Infof("%s", v.StaticRoutes)
 		l = LRStruct(v)

@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
@@ -167,9 +167,19 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	ovnNAT := g.Group("/v1/api/esix/ovn/NAT")
 	ovnQoS.Use(middleware.AuthMiddleware())
 	{
-		ovnNAT.GET("/:name",ovn.LRNATList)
-		ovnNAT.PUT("/:name",ovn.LRNATAdd)
-		ovnNAT.DELETE("/:name",ovn.LRNATDel)
+		ovnNAT.GET("/:name", ovn.LRNATList)
+		ovnNAT.PUT("/:name", ovn.LRNATAdd)
+		ovnNAT.DELETE("/:name", ovn.LRNATDel)
+	}
+
+	ovnMeter := g.Group("/v1/api/esix/ovn/Meter")
+	ovnMeter.Use(middleware.AuthMiddleware())
+	{
+		ovnMeter.PUT("/:name", ovn.MeterAdd)
+		ovnMeter.DELETE("/:name", ovn.MeterDel)
+		ovnMeter.DELETE("", ovn.MeterDel)
+		ovnMeter.GET("", ovn.MeterList)
+		ovnMeter.GET("/Bands", ovn.MeterBandsList)
 	}
 
 	return g

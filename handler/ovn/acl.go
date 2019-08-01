@@ -7,6 +7,7 @@ package ovn
 import (
 	"apiserver/handler"
 	"apiserver/pkg/errno"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 )
@@ -35,11 +36,13 @@ func ACLAdd(c *gin.Context) {
 	Ls := c.Param("name")
 	cmd, err := ovndbapi.ACLAdd(Ls, acl.Direct, acl.Match, acl.Action, acl.Priority, acl.ExternalIds, acl.Logflag, acl.Meter)
 	if err != nil {
+		log.Fatal("ERROR:", err)
 		handleOvnErr(c, err, errno.ErrACLAdd)
 		return
 	}
 	err = ovndbapi.Execute(cmd)
 	if err != nil {
+		log.Fatal("ERROR:", err)
 		handleOvnErr(c, err, errno.ErrACLAdd)
 		return
 	}

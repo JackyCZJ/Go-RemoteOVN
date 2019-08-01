@@ -1,13 +1,13 @@
 version: "3.1"
 
 services:
-  ovs:
-    image: socketplane/openvswitch:2.4.0
-    container_name: ovs
-    ports:
-      - "6640:6640"
-    command: "/usr/bin/supervisord -n"
-    privileged: true
+#  ovs:
+#    image: socketplane/openvswitch:2.4.0
+#    container_name: ovs
+#    ports:
+#      - "6640:6640"
+#    command: "/usr/bin/supervisord -n"
+#    privileged: true
   apiserver-server:
     build: ./docker
     container_name: apiserver-server

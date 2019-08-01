@@ -5,63 +5,42 @@
 package ovn
 
 import (
+	"apiserver/config"
 	"apiserver/handler"
 	"apiserver/pkg/errno"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	goovn "github.com/jackyczj/go-ovn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"sync"
 )
 
-var ovndbapi = newClient()
+type Client struct {
+	goovn.Client
+}
 
-const (
-	OVS_RUNDIR   = "/var/run/openvswitch"
-	OVNNB_SOCKET = "ovnnb_db.sock"
-)
+var ovndbapi Client
 
-func newClient() goovn.Client{
-	var err error
-	passLagerCfg := log.PassLagerCfg{
-		Writers:        viper.GetString("log.writers"),
-		LoggerLevel:    viper.GetString("log.logger_level"),
-		LoggerFile:     viper.GetString("log.logger_file"),
-		LogFormatText:  viper.GetBool("log.log_format_text"),
-		RollingPolicy:  viper.GetString("log.rollingPolicy"),
-		LogRotateDate:  viper.GetInt("log.log_rotate_date"),
-		LogRotateSize:  viper.GetInt("log.log_rotate_size"),
-		LogBackupCount: viper.GetInt("log.log_backup_count"),
+func init() {
+	err = config.Init("")
+	switch viper.GetString("ovn.runmode") {
+	case "local":
+		url := "unix://" + viper.GetString("ovn.OVS_RUNDIR") + "/" + viper.GetString("ovn.OVNNB_SOCKET")
+		ovndbapi.Client, err = goovn.NewClient(&goovn.Config{Addr: url})
+	case "remote":
+		ovndbapi.Client, err = goovn.NewClient(&goovn.Config{Addr: viper.GetString("ovn.RemoteUrl")})
 	}
-	err = log.InitWithConfig(&passLagerCfg)
 	if err != nil {
 		panic(err)
 	}
-	viper.SetDefault("ovn.remoteurl", "tcp://10.1.2.11:2333")
-	//if err := config.Init(""); err != nil {
-	//	panic(err)
-	//}
-	var url string
-	url = viper.GetString("ovn.remoteurl")
-	if viper.GetString("ovn.runmode") == "local" {
-		var ovs_rundir = viper.GetString("ovn.OVS_RUNDIR")
-		if ovs_rundir == "" {
-			ovs_rundir = OVS_RUNDIR
-		}
-		url = "unix:" + ovs_rundir + "/" + OVNNB_SOCKET
-	}
-	client, err := goovn.NewClient(&goovn.Config{Addr: url})
-	if err != nil {
-		panic(err)
-	}
-	return client
 }
 
 //Map[interface{}]interface{} can't transfer to json , make it to map[string]interface{}

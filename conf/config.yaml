@@ -32,4 +32,4 @@ ovn:
   OVS_RUNDIR: /var/run/openvswitch
   OVNNB_SOCKET: ovnnb_db.sock
   runmode: remote
-  remoteurl: tcp://10.1.2.11:2333
+  RemoteUrl: tcp://10.1.14.132:6641

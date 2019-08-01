@@ -50,4 +50,18 @@ var (
 
 	ErrLSLBAdd = &Errno{Code: 20221, Message: "Logical Switch add LoadBlancer Fail , some of those doesn't exist or connect fail"}
 	ErrLSLBDel = &Errno{Code: 20222, Message: "Logical Switch Delete LoadBlancer Fail , some of those doesn't exist or connect fail"}
+
+	ErrDHCPOptionAdd  = &Errno{Code: 20223, Message: "DHCP OPTION add fail. Already Exist, schema error or connect fail"}
+	ErrDHCPOptionDel  = &Errno{Code: 20224, Message: "DHCP OPTION del fail. Object doesn't exist or connect Fail"}
+	ErrDHCPOptionSet  = &Errno{Code: 20225, Message: "DHCP OPTION set fail. Object doesn't exist or connect Fail"}
+	ErrDHCPOptionList = &Errno{Code: 20226, Message: "Get DHCP OPTION List fail. Object doesn't exist or connect Fail'"}
+
+	ErrDHCPV4Set = &Errno{Code: 20227, Message: "ErrDHCPV4 Set FAILED . Object doesn't exist or connect fail"}
+	ErrDHCPV4Get = &Errno{Code: 20228, Message: "ErrDHCPV4 Get FAILED . Object doesn't exist or connect fail"}
+
+	ErrDHCPV6Set = &Errno{Code: 20229, Message: "ErrDHCPV6 Set FAILED . Object doesn't exist or connect fail"}
+	ErrDHCPV6Get = &Errno{Code: 20230, Message: "ErrDHCPV6 Get FAILED . Object doesn't exist or connect fail"}
+
+	ErrNatAdd = &Errno{Code: 20231, Message: "NAT Add FAILED , ERROR SCHEMA or connect fail"}
+	ErrNatDel = &Errno{Code: 20231, Message: "NAT Delete FAILED , Object not found or connect fail"}
 )
