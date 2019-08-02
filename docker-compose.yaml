@@ -9,16 +9,17 @@ services:
 #    command: "/usr/bin/supervisord -n"
 #    privileged: true
   apiserver-server:
-    build: ./docker
+    build: dockerfile
     container_name: apiserver-server
     links:
-      - ovs
+#      - ovs
       - apiserver-db
     volumes:
        - $HOME/go:/go
     working_dir: /go/src/apiserver
     ports:
-      - 8081:8080
+      - 8080:8080
+      - 8081:8081
     tty: true
   apiserver-db:
       image: mysql:5.7.25

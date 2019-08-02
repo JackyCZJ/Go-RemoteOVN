@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 BASEDIR = $(shell pwd)
 
 # build with verison infos

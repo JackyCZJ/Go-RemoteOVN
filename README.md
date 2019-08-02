@@ -122,9 +122,9 @@ Meter
   meter-del [NAME]          #remove meters
   meter-list                #print meters
 ```
-- [ ] meter add
-- [ ] meter del
-- [ ] meter list
+- [x] meter add
+- [x] meter del
+- [x] meter list
 
 LRP Gateway Chassis
 --
